@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="./css/styles.css">
+    <!-- Semantic-UI CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
+    <title>SolaiAgro</title>
+    
+    
+</head>
+
+<body>
+
+    <nav class="navbar navbar-dark bg-dark px-3 justify-content-between">
+        
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="menuDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                Menu
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="menuDropdown">
+                <li><a class="dropdown-item" href="dashboard.html">Dashboard</a></li>
+                <li><a class="dropdown-item" href="greens.html">Greens Entry</a></li>
+                
+            </ul>
+        </div>
+        <span class="navbar-brand mx-auto navbar-brand-centered">Greens Entry</span>
+         <!-- excel file upload-->
+         <button onclick="redirectToPage()">Upload</button>
+          
+          
+
+    <div class="d-flex align-items-center">
+        <span id="loggedInUser" class="text-white me-3"></span>
+        <button id="logoutBtnTop" class="btn btn-outline-light">Logout</button>
+    </div>
+</nav>
+
+<br>
+<br>
+<br>
+    <div  class="container mt-8">
+        <form id="greensForm" class="row g-4">
+            <input type="hidden" id="entryId">
+            <div class="col-md-2" >
+                <label for="DcNumber">DC Number:</label>
+                <input type="text" id="DcNumber" name="DcNumber" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label for="DcDate" class="form-label">DC Date</label>
+                <input type="date" id="DcDate" class="form-control" required>
+            </div>
+            <div class="col-md-2">
+                <label for="FactoryArrivalDate" class="form-label">Factory Arrival Date</label>
+                <input type="date" id="FactoryArrivalDate" class="form-control" required>
+            </div> 
+            <div class="col-md-2">
+                <label for="vendor_name">Vendor Name:</label>
+                <select id="vendor_name" class="form-control">
+                    <option value="">Select Vendor</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="locationDropdown">Location</label>
+                <select id="locationDropdown" class="form-control" required>
+                    <option value="">Loading...</option>
+                </select>
+            
+              
+            </div>
+            <div class="col-md-2">
+                <label for="pattern">Pattern:</label>
+                <select id="pattern" class="form-control">
+                    <option value="">Select Pattern</option>
+                </select>
+            </div>
+    
+            <div class="col-md-2">
+                <label for="D160plus" class="form-label">D-160+</label>
+                <input type="number" id="D160plus"  class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label for="D100plus" class="form-label">D-100+</label>
+                <input type="number"  id="D100plus" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label for="D30plus" class="form-label">D-30+</label>
+                <input type="number" id="D30plus"  class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label for="D30minus" class="form-label">D-30-</label>
+                <input type="number" id="D30minus"  class="form-control">
+            </div>
+    
+            <div class="col-md-2">
+                <label for="TotalDCWeight" class="form-label">Total DC Weight</label>
+                <input type="number" id="TotalDCWeight" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label for="VehicleNo" class="form-label">Vehicle No</label>
+                <input type="text" id="VehicleNo" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label for="F-160+" class="form-label">F-160+</label>
+                <input type="number" id="F160plus"  class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label for="F100plus" class="form-label">F-100+</label>
+                <input type="number"  id="F100plus" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label for="F30plus" class="form-label">F-30+</label>
+                <input type="number" id="F30plus"  class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label for="F30minus" class="form-label">F-30-</label>
+                <input type="number" id="F30minus"  class="form-control">
+            </div>
+            <div class="col-md-2">
+                <label for="TotalFactoryWeight">Factory Weight</label>
+                <input type="number" class="form-control" id="TotalFactoryWeight" readonly>
+            </div>  
+            <div class="col-md-2">
+                <label for="Shortage_Excess">Shortage/Excess</label>
+                <input type="number" class="form-control" id="Shortage_Excess" readonly>
+            </div> 
+            
+    
+            <div class="col-md-12 text-center">
+                <button type="submit" id="submitBtn" class="btn btn-success">Submit Entry</button>
+            </div>
+        </form>
+        </div>   
+        <!-- ✅ Entries Table -->
+        <div  >
+        <h3 class="mt-5 text-center">Entries List</h3>
+        <table class="ui inverted violet table table-bordered">
+            <thead class="table-dark">
+                <tr>
+                    <!--<th>ID</th> -->
+                    <th>DC Number</th>
+                    <th>DC Date</th>
+                    <!--<th>FactoryArrivalDate</th> -->
+                    <th>Vendor</th>
+                    <th>Location</th>
+                    <th>Pattern</th>
+                    <th>D160+</th>
+                    <th>D100+</th>
+                    <th>D30+</th>
+                    <th>D30-</th>
+                    <th>Total DC Weight</th>
+                    <th>F160+</th>
+                    <th>F100+</th>
+                    <th>F30+</th>
+                    <th>F30-</th>
+                    <th>Total Factory Weight</th>
+                    <th>Shortage/Excess  </th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="greensTableBody"></tbody>  
+        </table>
+        </div>
+    </div>
+    
+   
+    <script defer src="js/greensEntry.js"></script>
+    <script defer src="js/greensuploaddownload.js"></script>
+
+  
+
+   
+   <!-- Logout functionality -->
+    <script>
+       
+
+        // Logout functionality for the top navbar logout button
+        document.getElementById("logoutBtnTop").addEventListener("click", function() {
+            localStorage.removeItem("token"); // Remove the token from localStorage
+            window.location.href = "login.html"; // Redirect to login page
+        });
+
+      
+    </script>
+    <!-- Semantic UI Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    
+    <!-- Toggle Sidebar -->
+    <script>
+        $(function() {
+            // Sidebar toggle behavior
+            $('#sidebarCollapse').on('click', function() {
+                $('#sidebar, #content').toggleClass('active');
+            });
+        });
+    </script>
+    
+    <script>
+        // Redirect to another page (same window/tab)
+        function redirectToPage() {
+          window.location.href = "upload.html"; // Replace with your desired page
+        }
+        </script>
+    
+    
+    
+</body>
+
+</html>

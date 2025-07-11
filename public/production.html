@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SolaiAgro - Production Entry</title>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+
+  <style>
+    .section-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .entry-section {
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      background-color: #f9f9f9;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-dark bg-dark px-3 justify-content-between">
+    <div class="dropdown">
+      <button class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown">Menu</button>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="dashboard.html">Dashboard</a></li>
+        <li><a class="dropdown-item" href="greens.html">Greens Entry</a></li>
+      </ul>
+    </div>
+    <span class="navbar-brand mx-auto">Production Entry</span>
+    <div class="d-flex align-items-center">
+      <span id="loggedInUser" class="text-white me-3"></span>
+      <button id="logoutBtnTop" class="btn btn-outline-light">Logout</button>
+    </div>
+  </nav>
+
+  <!-- Main Form -->
+  <div class="container mt-4">
+    <form id="productionForm" class="row g-3">
+      <div class="row mb-3">
+        <div class="col-md-2">
+          <label class="form-label">Production Date</label>
+          <input type="date" name="productionDate" class="form-control" required>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Factory Weight</label>
+          <input type="number" id="factoryWeight" name="factoryWeight" class="form-control" step="0.01" required>
+        </div>
+        <!-- Wastage Info -->
+      
+       
+        <div class="col-md-2">
+          <label class="form-label">FF</label>
+          <input type="number" id="FF" name="FF" class="form-control" step="0.01" >
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">SOFT</label>
+          <input type="number" id="soft" name="SOFT" class="form-control" step="0.01" >
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">FUNGUS & ROTTEN</label>
+          <input type="number" id="fungus" name="fungusRotten" class="form-control" step="0.01" >
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">SHORTAGE</label>
+          <input type="number" id="shortage" name="shortageWeightLoss" class="form-control" step="0.01" readonly>
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">REMARK</label>
+          <input type="text" name="remark" class="form-control" >
+        </div>
+         <div class="col-md-2">
+          <label class="form-label">Production Weight</label>
+          <input type="number" id="productionWeight" name="productionWeight" class="form-control" step="0.01" readonly>
+        </div>
+        
+      
+
+      </div>
+
+      <!-- Acid Section -->
+      <div class="col-md-4 entry-section">
+        <div class="section-title">Acetic Acid Entry</div>
+        <div id="acidFields" class="row g-2">
+          <div class="col-md-6">
+            <select name="acidName1" class="form-select" required>
+              <option value="">Select Acid</option>
+              
+            </select>
+          </div>
+          <div class="col-md-6">
+            <input type="number" name="acidValue1" class="form-control" placeholder="Value" required>
+          </div>
+        </div>
+        <button type="button" onclick="addField('acidFields', 'acid')" class="btn btn-sm btn-success mt-2">+ Add Acetic Acid</button>
+      </div>
+
+      <!-- Vinegar Section -->
+      <div class="col-md-4 entry-section">
+        <div class="section-title">Vinegar Entry</div>
+        <div id="vinegarFields" class="row g-2">
+          <div class="col-md-6">
+            <select name="vinegarName1" class="form-select" required>
+              <option value="">Select Vinegar</option>
+              
+            </select>
+          </div>
+          <div class="col-md-6">
+            <input type="number" name="vinegarValue1" class="form-control" placeholder="Value" required>
+          </div>
+        </div>
+        <button type="button" onclick="addField('vinegarFields', 'vinegar')" class="btn btn-sm btn-success mt-2">+ Add Vinegar</button>
+      </div>
+
+      <!-- Brine Section -->
+      <div class="col-md-4 entry-section">
+        <div class="section-title">Brine Entry</div>
+        <div id="brineFields" class="row g-2">
+          <div class="col-md-6">
+            <select name="brineName1" class="form-select" required>
+              <option value="">Select Brine</option>
+             
+            </select>
+          </div>
+          <div class="col-md-6">
+            <input type="number" name="brineValue1" class="form-control" placeholder="Value" required>
+          </div>
+        </div>
+        <button type="button" onclick="addField('brineFields', 'brine')" class="btn btn-sm btn-success mt-2">+ Add Brine</button>
+       </div>
+     
+
+    
+
+      <!-- Submit Button -->
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Production Table -->
+  <div class="container mt-4">
+    <h5>Production Entries</h5>
+    <table id="productionTable" class="table table-bordered table-striped table-sm">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Production Date</th>
+          <th>Factory Weight</th>
+          <th>Production Weight</th>
+          <th>FF</th>
+          <th>Soft</th>
+          <th>Fungus/Rotten</th>
+          <th>Shortage</th>
+          <th>Remark</th>
+          <th>Acetic Acid</th>
+          <th>Vinegar</th>
+          <th>Brine</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <style>
+  #productionTable {
+    font-size: 11px; /* Reduce overall font size */
+    table-layout: auto;
+  }
+
+  #productionTable th,
+  #productionTable td {
+    font-size: 10px;       /* Smaller text in cells */
+    padding: 4px 6px;       /* Reduce spacing */
+    word-wrap: break-word;
+    max-width: 100px;       /* Prevent long text overflow */
+    white-space: normal;    /* Allow line breaks */
+    vertical-align: top;    /* Align text to top */
+  }
+
+  .container h5 {
+    font-size: 14px;        /* Slightly smaller heading */
+  }
+
+  /* Optional: Make Edit/Delete buttons smaller */
+  .btn {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+</style>
+
+  
+  
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+  <script defer src="js/production.js"></script>
+
+</body>
+
+</html>

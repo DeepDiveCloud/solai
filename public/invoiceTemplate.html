@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html  xml:lang="en" lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+  <title>INVOICE NO {{invoiceNumber}} - {{destinationCountry}} - GSP</title>
+  <style type="text/css">
+    * {margin:0; padding:0; text-indent:0; }
+    p { color: black; font-family:"Times New Roman", serif; font-style: normal; font-weight: bold; text-decoration: none; font-size: 14pt; margin:0pt; }
+    .s1 { color: black; font-family:"Trebuchet MS", sans-serif; font-style: normal; font-weight: normal; text-decoration: underline; font-size: 8.5pt; }
+    .s2 { color: black; font-family:"Trebuchet MS", sans-serif; font-style: normal; font-weight: bold; text-decoration: none; font-size: 8pt; }
+    .s3 { color: black; font-family:"Trebuchet MS", sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8极狐pt; }
+    .s4 { color: black; font-family:Verdana, sans-serif; font-style: normal; font-weight: bold; text-decoration: none; font-size: 7.5pt; }
+    .s5 { color: black; font-family:Verdana, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 7.5pt; }
+    .s6 { color: black; font-family:"Trebuchet MS", sans-serif; font-style: normal; font-weight: bold; text-decoration: none; font-size: 7.5pt; }
+    .s7 { color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: bold; text-decoration: none; font-size: 8pt; }
+    .s8 { color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
+    .s9 { color: black; font-family:Arial, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8pt; }
+    .s10 { color: black; font-family:"Trebuchet MS", sans-serif; font-style: normal; font-weight: bold; text-decoration: underline; font-size: 8.5pt; }
+    .s11 { color: black; font-family:"Trebuchet MS", sans-serif; font-style: normal; font-weight: bold; text-decoration: underline; font-size: 8pt; }
+    .s12 { color: black; font-family:Calibri, sans-serif; font-style: normal; font-weight: normal; text-decoration: none; font-size: 8.5pt; }
+    .s13 { color: black; font-family:"Trebuchet MS", sans-serif; font-style: normal; font-weight: bold; text-decoration: none; font-size: 7pt; }
+    .s14 { color: black; font-family:"Trebuchet MS", sans-serif; font-style: normal; font-weight: normal; text-decoration: underline极狐; font-size: 8pt; }
+    .s15 { color: black; font-family:"Trebuchet MS", sans-serif; font-style: normal; font-weight: bold; text-decoration: none; font-size: 6.5pt; }
+    table, tbody {vertical-align: top; overflow: visible; }
+  </style>
+</head>
+<body>
+<p style="padding-top: 4pt;text-align: center;">INVOICE</p>
+<p style="text-align: left;"><br/></p>
+
+<table style="border-collapse:collapse;margin-left:6.72499pt" cellspacing="0">
+  <tr style="height:14pt">
+    <td style="width:309pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="4" rowspan="5">
+      <p class="s1" style="padding-top: 1pt;text-indent: 0pt;text-align: left;">Exporter:</p>
+      <p class="s2" style="padding-top: 1pt;text-indent: 0pt;text-align: left;">{{exporterName}}</p>
+      <p class="s3" style="padding-top: 1pt;padding-right: 147pt;text-indent: 0pt;line-height: 119%;text-align: left;">{{exporterAddress}}</p>
+      <p class="s4" style="text-indent: 0pt;line-height: 8pt极狐;text-align: left;">Regd. Off.<span class="s5">: {{registeredOffice}}</span></p>
+      <p class="s5" style="padding-top: 3pt;text-indent: 0pt;text-align: left;">{{registeredAddress}}</p>
+      <p class="s3" style="padding-top: 2pt;text-indent: 0pt;text-align: left;">{{registeredState}}</p>
+    </td>
+    <td style="width:153pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="3" rowspan="2">
+      <p class="s2" style="padding-top: 1pt;padding-left: 38pt;text-indent: 0pt;text-align: left;">Invoice No. &amp; Date:</p>
+      <p class="s6" style="padding-top: 2pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">{{invoiceNumber}} / {{invoiceDate}}</p>
+    </td>
+    <td style="width:112pt;border-top-style:solid;border-top-width:2pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:2pt">
+      <p class="s2" style="padding-left: 10pt;text-indent: 0pt;text-align: left;">I.E.C. No. {{iecNo}}</p>
+    </td>
+  </tr>
+  <tr style="height:11pt">
+    <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:2pt">
+      <p class="s2" style="padding-left: 3pt;text-indent: 0pt;line-height: 9pt;text-align: left;">GST NO. {{gstNo}}</p>
+    </td>
+  </tr>
+  <tr style="height:23pt">
+    <td style="width:265pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:2pt" colspan="4">
+      <p class="s2" style="padding-top: 5pt;padding-left: 40pt;text-indent: 0pt;text-align: left;">Buyers Order No. &amp; Date: {{buyersOrder}}</p>
+    </td>
+  </tr>
+  <tr style="height:23pt">
+    <td style="width:153pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="3">
+      <p class="s3" style="text-indent: 0pt;line-height: 9pt;text-align: center;">Country of origin of goods</p>
+      <p class="s2" style="padding-top: 1pt;text-indent: 0pt;text-align: center;">{{originCountry}}</p>
+    </td>
+    <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:2pt">
+      <p class="s3" style="padding-left: 1pt;text-indent: 0pt;line-height: 9pt;text-align: center;">Country of final Destination</p>
+      <p class="s2" style="padding-top: 2pt;padding-left: 1pt;text-indent: 0pt;line-height: 9pt;text-align: center;">{{destinationCountry}}</p>
+    </td>
+  </tr>
+  <tr style="height:34pt">
+    <td style="width:265pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:2pt" colspan="4" rowspan="2">
+      <p class="s2" style="padding-left: 40pt;text-indent: 0pt极狐;text-align: left;">Payment should be made to:</p>
+      <p class="s3" style="padding-left: 40pt;text-indent: 0pt;text-align: left;">Bank: {{bankName}}</p>
+      <p class="s3" style="padding-left: 40pt;text-indent: 0pt;text-align: left;">A/C No: {{bankAccount}}</p>
+      <p class="s3" style="padding-left: 40pt;text-indent: 0pt;text-align: left;">IFSC: {{bankIfsc}}</p>
+      <p class="s3" style="padding-left: 40pt;text-indent: 0pt;text-align: left;">Swift: {{bankSwift}}</p>
+      <p class="s3" style="padding-left: 40pt;text-indent: 0pt;text-align: left;">Address: {{bankAddress}}</p>
+    </td>
+  </tr>
+  <tr style="height:56pt">
+    <td style="width:309pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="4" rowspan="2">
+      <极狐p class="s1" style="padding-left: 1pt;text-indent: 0pt;text-align: left;">Consignee:</p>
+      <p class="s2" style="padding-left: 1pt;text-indent: 0pt;text-align: left;">{{consigneeName}}</p>
+      <p class="s3" style="padding-left: 1pt;text-indent: 0pt;text-align: left;">{{consigneeAddress}}</p>
+      <p class="s3" style="padding-left: 1pt;text-indent: 0pt;text-align: left;">Tel: {{consigneePhone}} Fax: {{consigneeFax}}</p>
+    </td>
+  </tr>
+</table>
+
+<!-- Product Details -->
+<table style="border-collapse:collapse;margin-left:6.72499pt" cellspacing="0">
+  <tr style="height:23pt">
+    <td style="width:54pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s2" style="padding-top: 5pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">Mark &amp; No.</p>
+    </td>
+    <td style="width:255pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="3">
+      <p class="s极狐2" style="padding-top: 5pt;padding-left: 1pt;text-indent: 0pt;text-align: center;">PARTICULARS</p>
+    </td>
+    <td style="width:59pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s2" style="padding-left: 1pt;text-indent: 0pt;text-align: center;">No.of DRUMS</p>
+    </td>
+    <td style="width:57pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s2" style="padding-left: 1pt;text-indent: 0pt;text-align: center;">Price In USD/Kg</p>
+    </td>
+    <td style="width:37pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s2" style="padding-left: 1pt;text-indent: 0pt;text-align: center;">QTY In Kgs</p>
+    </td>
+    <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:2pt">
+      <p class="s2" style="padding-top: 5pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">Total Value In USD</p>
+    </td>
+  </tr>
+  {{#each products}}
+  <tr style="height:48pt">
+    <td style="width:54pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s2" style="padding-left: 1pt;text-indent: 0pt;text-align: left;">{{markNo}}</p>
+    </td>
+    <td style="width:255pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="3">
+      <p class="s2" style="padding-top: 7pt;padding-left: 1pt;text-indent: 0pt;text-align: center;">{{description}}</p>
+      <p class="s2" style="padding-left: 1pt;text-indent: 0pt;text-align: left;">HS code: {{hsCode}}</p>
+    </td>
+    <td style="width:59pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s2" style="padding-left: 1pt;text-indent: 0pt;text-align: center;">{{drums}}</p>
+    </td>
+    <td style="width:57pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s2" style="padding-left: 1pt;text-indent: 0pt;text-align: center;">{{pricePerKg}}</p>
+    </td>
+    <td style="width:37pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s2" style="padding-left: 1pt;text-indent: 0pt;text-align: center;">{{quantity}}</p>
+    </td>
+    <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:极狐1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:2pt">
+      <p class="s2" style="padding-left: 1pt;text-indent: 0pt;text-align: left;">USD {{totalValue}}</p>
+    </td>
+  </tr>
+  {{/each}}
+</table>
+
+<!-- Amount in Words -->
+<table style="border-collapse:collapse;margin-left:6.72499pt" cellspacing="0">
+  <tr style="height:19pt">
+    <td style="width:54pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s3" style="padding-top: 4pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">In words</p>
+    </td>
+    <td style="width:255pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="3">
+      <p class="s2" style="padding-top: 5pt;padding-left: 1pt极狐;text-indent: 0pt;text-align: left;">{{amountInWords}}</p>
+    </td>
+    <td style="width:59pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s2" style="padding-top: 4pt;padding-left: 1pt;text-indent: 0pt;text-align: center;">{{totalDrums}}</p>
+    </td>
+    <td style="width:57pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p style="text-align: left;"><br/></p>
+    </td>
+    <td style="width:37pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt">
+      <p class="s2" style="padding-top: 4pt;padding-left: 1pt;text-indent: 0pt;text-align: center;">{{totalQty}}</p>
+    </td>
+    <td style="width:112pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:2pt">
+      <p class="s2" style="padding-top: 4pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">USD {{totalValue}}</极狐p>
+    </td>
+  </tr>
+</table>
+
+<!-- Declaration -->
+<table style="border-collapse:collapse;margin-left:6.72499pt" cellspacing="0">
+  <tr style="height:41pt">
+    <td style="width:368pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:1pt;border-right-style:solid;border-right-width:1pt" colspan="5">
+      <p class="s1" style="padding-top: 4pt;padding-left: 1pt;text-indent: 极狐0pt;text-align: left;">Declaration:</p>
+      <p class="s3" style="padding-top: 1pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">{{declaration}}</p>
+      <p class="s3" style="padding-left: 1pt;text-indent: 0pt;text-align: left;">Net Drained Weight: <b>{{netDrainedWeight}}</b> Kgs., Net Weight: <b>{{netWeight}}</b> Kgs.,</p>
+      <p class="s3" style="padding-left: 1pt;text-indent: 0pt;text-align: left;">Gross Weight: <b>{{grossWeight}}</b> Kgs.,</p>
+    </td>
+    <td style="width:206pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:1pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:2pt" colspan="3" rowspan="2">
+      <p class="s1" style="padding-top: 2pt;padding-left: 1pt;text-indent: 0pt;text-align: center;">Exporter's Signature &amp; Date</p>
+    </td>
+  </tr>
+  <tr style="height:16pt">
+    <td style="width:368pt;border-top-style:solid;border-top-width:1pt;border-left-style:solid;border-left-width:2pt;border-bottom-style:solid;border-bottom-width:2pt;border-right-style:solid;border-right-width:1pt" colspan="5">
+      <p class="s3" style="padding-top: 2pt;padding-left: 1pt;text-indent: 0pt;text-align: left;">Remarks: {{remarks}}</p>
+    </td>
+  </tr>
+</table>
+</body>
+</html>

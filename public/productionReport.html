@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Production Report</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+</head>
+<body class="p-4">
+  <h3>Production Report</h3>
+
+  <!-- FILTER FORM -->
+  <form id="filterForm" class="row g-3 mb-4">
+    <div class="col-md-2">
+      <label for="fromDate" class="form-label">From:</label>
+      <input type="date" id="fromDate" class="form-control" />
+    </div>
+    <div class="col-md-2">
+      <label for="toDate" class="form-label">To:</label>
+      <input type="date" id="toDate" class="form-control" />
+    </div>
+    <div class="col-md-2">
+      <label for="acidFilter" class="form-label">Acetic Acid:</label>
+      <select id="acidFilter" class="form-select">
+        <option value="1">Select</option>
+        <option value="">All</option>
+        <option value="A.Acid 500+">A.Acid 500+</option>
+              <option value="A.Acid 300+">A.Acid 300+</option>
+              <option value="A.Acid 160+">A.Acid 160+</option>
+              <option value="A.Acid 100+">A.Acid 100+</option>
+              <option value="A.Acid 30+">A.Acid 30+</option>
+              <option value="A.Acid 30-">A.Acid 30-</option>
+              <option value="A.Acid 300/450">A.Acid 300/450</option>
+              <option value="A.Acid 150/300">A.Acid 150/300</option>
+              <option value="A.Acid 120/150">A.Acid 120/150</option>
+              <option value="A.Acid 90/150">A.Acid 90/150</option>
+              <option value="A.ACID 60/160">A.ACID 60/160</option>
+              <option value="A.Acid 80/120">A.Acid 80/120</option>
+              <option value="A.ACID 60/100">A.ACID 60/100</option>
+              <option value="A.Acid 60/80">A.Acid 60/80</option>
+              <option value="A.Acid 40/60">A.Acid 40/60</option>
+              <option value="A.Acid 30/60">A.Acid 30/60</option>
+              <option value="A.Acid 20/30">A.Acid 20/30</option>
+              <option value="A.Acid 10/20">A.Acid 10/20</option>
+              <option value="A.Acid 5/10">A.Acid 5/10</option>
+              <option value="A.Acid Mixed">A.Acid Mixed</option>
+              <option value="A.Acid CN 9-12">A.Acid CN 9-12</option>
+              <option value="A.Acid CN 6-9">A.Acid CN 6-9</option>
+              <option value="A.Acid CN 3-6">A.Acid CN 3-6</option>
+              <option value="A.Acid CN 1-4">A.Acid CN 1-4</option>
+              <option value="A.Acid CN">A.Acid CN</option>
+        <!-- …other acid options… -->
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label for="vinegarFilter" class="form-label">Vinegar:</label>
+      <select id="vinegarFilter" class="form-select">
+        <option value="1">Select</option>
+        <option value="">All</option>
+       <option value="Vinegar 600+">Vinegar 600+</option>
+              <option value="Vinegar 150+">Vinegar 150+</option>
+              <option value="Vinegar 120+">Vinegar 120+</option>
+              <option value="Vinegar 100+">Vinegar 100+</option>
+              <option value="Vinegar 80+">Vinegar 80+</option>
+              <option value="Vinegar 30+">Vinegar 30+</option>
+              <option value="Vinegar 300/450">Vinegar 300/450</option>
+              <option value="Vinegar 150/300">Vinegar 150/300</option>
+              <option value="Vinegar 120/150">Vinegar 120/150</option>
+              <option value="Vinegar 80/150">Vinegar 80/150</option>
+              <option value="Vinegar 80/120">Vinegar 80/120</option>
+              <option value="Vinegar 60/160">Vinegar 60/160</option>
+              <option value="Vinegar 60/80">Vinegar 60/80</option>
+              <option value="Vinegar 40/60">Vinegar 40/60</option>
+              <option value="Vinegar 30/60">Vinegar 30/60</option>
+              <option value="Mixed">Vinegar Mixed</option>
+        <!-- …other vinegar options… -->
+      </select>
+    </div>
+    <div class="col-md-2">
+      <label for="brineFilter" class="form-label">Brine:</label>
+      <select id="brineFilter" class="form-select">
+        <option value="1">Select</option>
+        <option value="">All</option>
+         <option value="brine 300+">brine 300+</option>
+              <option value="brine 160+">brine 160+</option>
+              <option value="brine 100+">brine 100+</option>
+              <option value="brine 30+">brine 30+</option>
+              <option value="brine 30-">brine 30-</option>
+              <option value="brine 20-">brine 20-</option>
+              <option value="brine 5-">brine 5-</option>
+              <option value="brine 150/300">brine 150/300</option>
+              <option value="brine 100/160">brine 100/160</option>
+              <option value="brine 60/100">brine 60/100</option>
+              <option value="brine 30/60">brine 30/60</option>
+              <option value="brine 40/60">brine 40/60</option>
+              <option value="brine 30/40">brine 30/40</option>
+              <option value="brine 20/30">brine 20/30</option>
+              <option value="brine 10/30">brine 10/30</option>
+              <option value="brine 10/20">brine 10/20</option>
+              <option value="brine 5/20">brine 5/20</option>
+              <option value="brine 5/10">brine 5/10</option>
+              <option value="brine 32-40in mm">brine 32-40in mm</option>
+              <option value="brine Viral">brine Viral</option>
+              <option value="brine Viral 60-">brine Viral 60-</option>
+              <option value="brine Viral 60/160">brine Viral 60/160</option>
+              <option value="brine Mixed">brine Mixed</option>
+              <option value="brine Mixing">brine Mixing</option>
+              <option value="brine CN">brine CN</option>
+              <option value="brine Blotash">brine Blotash</option>
+        <!-- …other brine options… -->
+      </select>
+    </div>
+    
+  </form>
+
+  <!-- SUMMARY BLOCK -->
+  <div id="summary" class="mb-4">
+    <p><strong>Total Acetic Acid:</strong> <span id="acidTotal">–</span></p>
+    <p><strong>Total Vinegar:</strong> <span id="vinegarTotal">–</span></p>
+    <p><strong>Total Brine:</strong> <span id="brineTotal">–</span></p>
+    <p>
+      <strong>Total Stock (Acid + Vinegar + Brine):</strong>
+      <span id="totalStock">–</span>
+    </p>
+  </div>
+<button id="downloadExcel" class="btn btn-success">Download Excel</button>
+
+  <!-- RESULTS TABLE -->
+  <!-- RESULTS TABLE -->
+<div id="tableContainer" class="table-responsive" style="display: none;">
+  <table id="reportTable" class="table table-sm table-bordered">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Date</th>
+        <th>Factory Wt</th>
+        <th>Prod Wt</th>
+        <th>Acid</th>
+        <th>Vinegar</th>
+        <th>Brine</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td colspan="7" class="text-center">Please select filters above</td></tr>
+    </tbody>
+  </table>
+</div>
+
+
+  <script src="js/productionReport.js"></script>
+</body>
+</html>

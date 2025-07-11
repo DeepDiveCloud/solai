@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <!-- Required meta tags -->
+     <meta charset="utf-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1">
+     <!-- Custom CSS -->
+     <link rel="stylesheet" href="./css/styles.css">
+     <!-- Semantic-UI CSS -->
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
+     <!-- Bootstrap CSS -->
+     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+     <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+ 
+     <title>SolaiAgro</title>
+
+    
+</head>
+<body>
+     <!-- Sidebar Menu -->
+     <div class="vertical-nav bg-white" id="sidebar">
+        <div class="py-4 px-3 mb-4" style="background: linear-gradient(to top, #0066eb 0%, #65ce5d 68%);">
+            <div class="media d-flex align-items-center"><img src="./images/solai logo.png" alt="..." width="65" class="mr-3 rounded-circle img-thumbnail shadow-sm">
+                &emsp;<div class="media-body">
+                    <h4 class="m-0"><p class="text-white">Solai Agro</p></h4>
+                    <p class="font-weight-light text-white mb-0">(Admin)</p>
+                </div>
+            </div>
+        </div>
+        <center> 
+            <button class="btn btn-danger" id="logoutBtnTop">Logout</button>
+        </center>
+        <h5 class="ui horizontal divider header text-primary">Project</h5>
+        <ul class="nav flex-column bg-white mb-0">
+            <li class="nav-item">
+                <a href="dashboard.html" class="nav-link text-dark">
+                    <i class="home icon"></i> Dashboard
+                </a> 
+            </li>
+            <li class="nav-item">
+                <a href="greens.html" class="nav-link text-dark">
+                    <i class="leaf icon"></i> Greens Entry
+                </a> 
+            </li>
+            <li class="nav-item">
+                <a href="Greens Status Report.html" class="nav-link text-dark">
+                    <i class="chart line icon"></i> Greens Status
+                </a> 
+            </li>       
+            <li class="nav-item">
+                <a href="RawMaterialPurchase.html" class="nav-link text-dark">
+                    <i  class="cart arrow down icon"></i></i>Raw metrial purches
+                </a> 
+            </li>
+            
+            <li class="nav-item">
+                <a href="" class="nav-link text-dark">
+                    <i class="cubes icon"></i> PACKING MATERIAL
+                </a> 
+            </li>
+            <li class="nav-item">
+                <a href="" class="nav-link text-dark">
+                    <i class="ship icon"></i> Greens Sales
+                </a> 
+            </li>
+            
+          
+        </ul>
+        <h5 class="ui horizontal divider header text-primary">Administration </h5>
+        <ul class="nav flex-column bg-white mb-0">
+            <li class="nav-item">
+                <a href="" class="nav-link text-dark">
+                    <i class="plane icon"></i> Logistics
+                </a> 
+            </li>
+            <li class="nav-item">
+                <a href="transport.html" class="nav-link text-dark">
+                    <i class="shipping fast icon"></i>  Transport
+                </a> 
+            </li>
+            <li class="nav-item">
+                <a href="Location.html" class="nav-link text-dark">
+                    <i class="home icon"></i> Salary
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="vendors.html" class="nav-link text-dark">
+                    <i class="users icon"></i> Factory Expenses
+                </a>
+            </li>
+          
+            <li class="nav-item">
+                <a href="product.html" class="nav-link text-dark">
+                    <i class="leaf icon"></i> Product
+                </a>
+            </li>
+        </ul>
+        <h5 class="ui horizontal divider header text-primary">Customizing</h5>
+        <ul class="nav flex-column bg-white mb-0">
+            <li class="nav-item">
+                <a href="Location.html" class="nav-link text-dark">
+                    <i class="home icon"></i> Location
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="vendors.html" class="nav-link text-dark">
+                    <i class="users icon"></i> Vendors
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="customers.html" class="nav-link text-dark">
+                    <i class="leaf icon"></i> customer
+                </a>
+            </li>
+        </ul>
+        <h5 class="ui horizontal divider header text-primary">Admin Console</h5>
+        <ul class="nav flex-column bg-white mb-0">
+            <li class="nav-item">
+                <a href="users.html" class="nav-link text-dark">
+                    <i class="users icon"></i> Manage Users
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="greens.html" class="nav-link text-dark">
+                    <i class="leaf icon"></i> Greens Arrival
+                </a>
+            </li>
+            <a href="#" id="logoutBtn"><i class="sign-out icon"></i> Logout</a>
+        </ul>
+    </div>
+<!-- Sidebar Menu end -->
+  <!-- Page content holder -->
+   <div class="page-content p-5" id="content" style="background: linear-gradient(to right, #e9edf1 47%, #38e07b 100%);">
+     <!-- Toggle button -->
+      <button id="sidebarCollapse" type="button" class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4">
+        <i class="align justify icon"></i><small class="text-uppercase font-weight-bold">Menu</small>
+      </button>
+        <!-- excel file upload-->
+        <div class="container mt-4">
+            <h2>Vendor Price Management</h2>
+        
+            <!-- Vendor Price Form -->
+            <form id="vendorPriceForm" class="mb-4">
+                <div class="mb-3">
+                    <input type="text" id="season_name" placeholder="season_name"required />
+                    <label>From Date:</label>
+                    <input type="date" id="from_date" required />
+                    <label>To Date:</label>
+                    <input type="date" id="to_date" required />
+                </div>
+              <div class="mb-3">
+                <label >Vendor Name</label>
+                <input type="text" id="vendor_name" required />
+                <label >Pattern<label>
+                <select id="pattern" class="form-control" required>
+                    <option value="">Select Pattern</option>
+                    <option value="160+">160+</option>
+                    <option value="100+">100+</option>
+                    <option value="30+">30+</option>
+                </select>
+            </div>
+             
+              <div class="mb-3">
+                <label for="price_160_plus" class="form-label">160+ Price</label>
+                <input type="number" id="price_160_plus" class="form-control" required step="0.01" />
+              </div>
+              <div class="mb-3">
+                <label for="price_100_plus" class="form-label">100+ Price</label>
+                <input type="number" id="price_100_plus" class="form-control" required step="0.01" />
+              </div>
+              <div class="mb-3">
+                <label for="price_30_plus" class="form-label">30+ Price</label>
+                <input type="number" id="price_30_plus" class="form-control" required step="0.01" />
+              </div>
+              <div class="mb-3">
+                <label for="price_30_minus" class="form-label">30- Price</label>
+                <input type="number" id="price_30_minus" class="form-control" required step="0.01" />
+              </div>
+              <button type="submit" class="btn btn-primary">Save Vendor Price</button>
+            </form>
+        
+            <hr />
+        
+            <!-- Vendor Price List Table -->
+            <h3>Vendor Prices</h3>
+            <table class="ui inverted violet table table-bordered">
+              
+                    <thead>
+                      <tr>
+                        <th>No</th>
+                        <th>Season Name</th>
+                        <th>Season (From - To)</th>
+                        <th>Vendor Name</th>
+                        <th>Pattern</th>
+                        <th>Price 160+</th>
+                        <th>Price 100+</th>
+                        <th>Price 30+</th>
+                        <th>Price 30-</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+              <tbody id="vendorPriceTable">
+                <!-- Data will be inserted dynamically -->
+              </tbody>
+            </table>
+          </div>
+   </div>
+    
+        
+
+    
+
+     <!-- Logout functionality -->
+    <script>
+       
+
+        // Logout functionality for the top navbar logout button
+        document.getElementById("logoutBtnTop").addEventListener("click", function() {
+            localStorage.removeItem("token"); // Remove the token from localStorage
+            window.location.href = "login.html"; // Redirect to login page
+        });
+
+        // Toggle Sidebar functionality
+        document.getElementById("sidebarToggle").addEventListener("click", function() {
+            const sidebar = document.getElementById("sidebar");
+            const content = document.getElementById("content");
+
+            sidebar.classList.toggle("collapsed");
+            content.classList.toggle("expanded");
+        });
+    </script>
+    <!-- Semantic UI Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    
+    <!-- Toggle Sidebar -->
+    <script>
+        $(function() {
+            // Sidebar toggle behavior
+            $('#sidebarCollapse').on('click', function() {
+                $('#sidebar, #content').toggleClass('active');
+            });
+        });
+    </script>
+    <script defer src="./js/vendorprice.js"></script>
+
+        
+</body>
+</html>
