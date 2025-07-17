@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Raw Material Entry</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body class="p-4">
+  <div class="container">
+    <h3>Raw Material Entry</h3>
+    <form id="materialForm">
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <label for="date" class="form-label">Date</label>
+          <input type="date" id="date" class="form-control" required />
+        </div>
+        <div class="col-md-4">
+          <label for="vendor" class="form-label">Vendor</label>
+          <input type="text" id="vendor" class="form-control" required />
+        </div>
+        <div class="col-md-4">
+          <label for="invoice" class="form-label">Invoice No.</label>
+          <input type="text" id="invoice" class="form-control" required />
+        </div>
+      </div>
+
+      <!-- Dynamic material rows -->
+      <table class="table table-bordered" id="materialTable">
+        <thead>
+          <tr>
+            <th>Material Name</th>
+            <th>Quantity (kg)</th>
+            <th>Rate (₹)</th>
+            <th>Amount</th>
+            <th><button type="button" class="btn btn-sm btn-primary" onclick="addRow()">+</button></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="mb-3">
+        <strong>Total Amount: ₹<span id="totalAmount">0.00</span></strong>
+      </div>
+
+      <button type="submit" class="btn btn-success">Submit</button>
+    </form>
+  </div>
+
+  <script>
+    const tbody = document.querySelector('#materialTable tbody');
+    const totalAmountEl = document.getElementById("totalAmount");
+
+    function addRow() {
+      const row = document.createElement("tr");
+      row.innerHTML = `
+        <td><input type="text" class="form-control material" required /></td>
+        <td><input type="number" class="form-control qty" step="0.01" required /></td>
+        <td><input type="number" class="form-control rate" step="0.01" required /></td>
+        <td><input type="text" class="form-control amount" readonly /></td>
+        <td><button type="button" class="btn btn-sm btn-danger" onclick="removeRow(this)">−</button></td>
+      `;
+      tbody.appendChild(row);
+      bindEvents();
+    }
+
+    function bindEvents() {
+      tbody.querySelectorAll("input.qty, input.rate").forEach(input => {
+        input.addEventListener("input", calculateAmounts);
+      });
+    }
+
+    function calculateAmounts() {
+      let total = 0;
+      tbody.querySelectorAll("tr").forEach(row => {
+        const qty = parseFloat(row.querySelector(".qty")?.value) || 0;
+        const rate = parseFloat(row.querySelector(".rate")?.value) || 0;
+        const amount = qty * rate;
+        row.querySelector(".amount").value = amount.toFixed(2);
+        total += amount;
+      });
+      totalAmountEl.textContent = total.toFixed(2);
+    }
+
+    function removeRow(btn) {
+      btn.closest("tr").remove();
+      calculateAmounts();
+    }
+
+    // Initial row
+    addRow();
+
+    document.getElementById("materialForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const date = document.getElementById("date").value;
+      const vendor = document.getElementById("vendor").value;
+      const invoice = document.getElementById("invoice").value;
+
+      const materials = [];
+      tbody.querySelectorAll("tr").forEach(row => {
+        materials.push({
+          name: row.querySelector(".material").value,
+          qty: parseFloat(row.querySelector(".qty").value),
+          rate: parseFloat(row.querySelector(".rate").value),
+          amount: parseFloat(row.querySelector(".amount").value)
+        });
+      });
+
+      const payload = { date, vendor, invoice, materials };
+
+      console.log("Submitting raw material entry:", payload);
+      alert("Raw Material Entry Submitted!");
+
+      // Here you can send `payload` via fetch to your backend
+    });
+  </script>
+</body>
+</html>
