@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial load
   loadProductions();
   updateLoggedInUserUI();
-// 1️⃣ Populate any existing static select in the HTML
+   // 1️⃣ Populate any existing static select in the HTML
   ['acidFields','vinegarFields','brineFields'].forEach(containerId => {
     document
       .querySelectorAll(`#${containerId} select`)
@@ -25,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
       });
   });
-  // Seed one row each
+       // Seed one row each
   ['acidFields','vinegarFields','brineFields'].forEach(id=>{
     document.getElementById(id).innerHTML = '';
     addField(id, id.replace('Fields',''));
