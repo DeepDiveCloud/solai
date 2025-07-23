@@ -22,23 +22,13 @@ transporter.verify((error, success) => {
   }
 });
 
-// ✅ Helper: Sum JSON values
-function sumJsonValues(jsonString) {
-  try {
-    const items = JSON.parse(jsonString || '[]');
-    return items.reduce((sum, item) => sum + (parseFloat(item.value) || 0), 0).toFixed(2);
-  } catch {
-    return "0.00";
-  }
-}
-
-// ✅ Greens Table
+// ✅ HTML Table: Greens
 function generateGreensTable(rows) {
   if (rows.length === 0) return "<p>No greens entry today.</p>";
 
   const tr = rows.map(row => `
     <tr>
-      <td>${row.dc_number}</td> 
+      <td>${row.dc_number}</td>
       <td>${row.vendor_name}</td>
       <td>${row.pattern_name}</td>
       <td>${row.dc_date}</td>
@@ -69,7 +59,7 @@ function generateGreensTable(rows) {
   `;
 }
 
-// ✅ Production Table (with Acid, Vinegar, Brine)
+// ✅ HTML Table: Production
 function generateProductionDetailTable(rows) {
   if (rows.length === 0) return "<p>No production entry today.</p>";
 
@@ -112,18 +102,12 @@ function generateProductionDetailTable(rows) {
   `;
 }
 
-
-// ✅ Daily Cron at 11:00 PM
-cron.schedule('0 23 * * *', async () => {
-  await sendDailyEmail("🌿 Daily Greens & Production Report");
-});
-
-// ✅ Send Email
-async function sendDailyEmail(subject = "🌿 Manual Trigger: Daily Report") {
+// ✅ Email Function
+async function sendDailyEmail(subject = "🌿 Solai Agro - Daily Report") {
   try {
     const [greens] = await db.query(`
       SELECT 
-        dc_number AS dc_number, 
+        dc_number,
         vendor AS vendor_name,
         pattern AS pattern_name,
         DATE_FORMAT(dc_date, '%Y-%m-%d') AS dc_date,
@@ -137,19 +121,19 @@ async function sendDailyEmail(subject = "🌿 Manual Trigger: Daily Report") {
 
     const [productionDetails] = await db.query(`
       SELECT 
-  DATE_FORMAT(production_date, '%Y-%m-%d') AS production_date,
-  factory_weight,
-  production_weight,
-  FF,
-  soft,
-  fungus_rotten,
-  shortage_weight_loss,
-  remark,
-  JSON_EXTRACT(acetic_acid, '$[0].value') AS acetic_acid,
-  JSON_EXTRACT(vinegar, '$[0].value') AS vinegar,
-  JSON_EXTRACT(brine, '$[0].value') AS brine
-FROM production
-WHERE DATE(production_date) = CURDATE()
+        DATE_FORMAT(production_date, '%Y-%m-%d') AS production_date,
+        factory_weight,
+        production_weight,
+        FF,
+        soft,
+        fungus_rotten,
+        shortage_weight_loss,
+        remark,
+        JSON_UNQUOTE(JSON_EXTRACT(acetic_acid, '$[0].value')) AS acetic_acid,
+        JSON_UNQUOTE(JSON_EXTRACT(vinegar, '$[0].value')) AS vinegar,
+        JSON_UNQUOTE(JSON_EXTRACT(brine, '$[0].value')) AS brine
+      FROM production
+      WHERE DATE(production_date) = CURDATE()
     `);
 
     const html = `
@@ -172,7 +156,13 @@ WHERE DATE(production_date) = CURDATE()
   }
 }
 
-// ✅ Manual trigger for testing
+// ✅ Daily Cron Job at 11 PM IST
+cron.schedule('30 17 * * *', async () => {
+  // Note: 17:30 UTC == 11:00 PM IST
+  await sendDailyEmail("🌿 Daily Greens & Production Report");
+});
+
+// ✅ Manual Trigger (for test or server restart)
 //(async () => {
-  //await sendDailyEmail();
-//})();//
+ // await sendDailyEmail("🌿 Manual Trigger - Solai Agro Report");
+//})();
