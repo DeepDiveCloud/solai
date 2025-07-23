@@ -1,270 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="./css/styles.css">
-    <!-- Semantic-UI CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-    <script src="https://unpkg.com/easyinvoice/dist/easyinvoice.min.js"></script>
-    <title>SolaiAgro</title>
-    
-    
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Solai Agro | Dashboard</title>
+
+  <!-- CSS Libraries -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      background-color: #eaffea;
+      color: #000;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #sidebar {
+      width: 250px;
+      background: #1f1f1f;
+      color: #ffffff;
+      position: fixed;
+      height: 100%;
+      overflow-y: auto;
+      padding-top: 20px;
+    }
+
+    #sidebar a {
+      color: #ccc;
+      padding: 12px 20px;
+      display: block;
+      transition: 0.3s;
+    }
+
+    #sidebar a:hover {
+      background: #333;
+      color: #fff;
+    }
+
+    #content {
+      margin-left: 250px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    #sidebar.collapsed {
+      margin-left: -250px;
+    }
+
+    #content.expanded {
+      margin-left: 0;
+    }
+
+    .card-dark {
+      background-color: #fff;
+      border: 2px solid #d4d4d4;
+      border-radius: 12px;
+      color: #000;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    }
+
+    .stat-title {
+      font-size: 1rem;
+      color: #000;
+      font-weight: bold;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+
+    .btn-light {
+      background-color: #333;
+      color: white;
+      border: none;
+    }
+
+    .btn-light:hover {
+      background-color: #555;
+    }
+
+    .nav-divider {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      color: #888;
+      letter-spacing: 1px;
+    }
+
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    #datetime {
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    h2, h3, table thead th {
+      color: #000 !important;
+      font-weight: bold !important;
+    }
+  </style>
 </head>
 
 <body>
+  <!-- Sidebar -->
+  <div id="sidebar">
+    <center>
+      <img src="./images/solai logo.png" width="80" class="rounded-circle mb-3" />
+      <h4>Solai Agro</h4>
+      <p>(Admin)</p>
+      <button class="btn btn-danger mb-3" id="logoutBtnTop">Logout</button>
+    </center>
 
-    <!-- Sidebar Menu -->
-    <div class="vertical-nav bg-white" id="sidebar">
-        <div class="py-4 px-3 mb-4" style="background: linear-gradient(to top, #0066eb 0%, #65ce5d 68%);">
-            <div class="media d-flex align-items-center"><img src="./images/solai logo.png" alt="..." width="65" class="mr-3 rounded-circle img-thumbnail shadow-sm">
-                &emsp;<div class="media-body">
-                    <h4 class="m-0"><p class="text-white">Solai Agro</p></h4>
-                    <p class="font-weight-light text-white mb-0">(Admin)</p>
-                </div>
-            </div>
-        </div>
-        <center> 
-            <button class="btn btn-danger" id="logoutBtnTop">Logout</button>
-        </center>
-        <h5 class="ui horizontal divider header text-primary">Project</h5>
-        <ul class="nav flex-column bg-white mb-0">
-            <li class="nav-item">
-                <a href="dashboard.html" class="nav-link text-dark">
-                    <i class="home icon"></i> Dashboard
-                </a> 
-            </li>
-            <li class="nav-item">
-                <a href="greens.html" class="nav-link text-dark">
-                    <i class="leaf icon"></i> Greens Entry
-                </a> 
-            </li>
-            <li class="nav-item">
-                <a href="Greens Status Report.html" class="nav-link text-dark">
-                    <i class="chart line icon"></i> Greens Status
-                </a> 
-            </li>   
-             <li class="nav-item">
-                <a href="Production.html" class="nav-link text-dark">
-                    <i  class="cart arrow down icon"></i></i>production
-                </a> 
-            </li>        
-            <li class="nav-item">
-                <a href="RawMaterialPurchase.html" class="nav-link text-dark">
-                    <i  class="cart arrow down icon"></i></i>Raw metrial purches
-                </a> 
-            </li>
-            
-            <li class="nav-item">
-                <a href="" class="nav-link text-dark">
-                    <i class="cubes icon"></i> PACKING MATERIAL
-                </a> 
-            </li>
-            <li class="nav-item">
-                <a href="" class="nav-link text-dark">
-                    <i class="ship icon"></i> Greens Sales
-                </a> 
-            </li>
-            
-          
-        </ul>
-        <h5 class="ui horizontal divider header text-primary">Administration </h5>
-        <ul class="nav flex-column bg-white mb-0">
-            <li class="nav-item">
-                <a href="" class="nav-link text-dark">
-                    <i class="plane icon"></i> Logistics
-                </a> 
-            </li>
-            <li class="nav-item">
-                <a href="transport.html" class="nav-link text-dark">
-                    <i class="shipping fast icon"></i>  Transport
-                </a> 
-            </li>
-            <li class="nav-item">
-                <a href="Location.html" class="nav-link text-dark">
-                    <i class="home icon"></i> Salary
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="vendors.html" class="nav-link text-dark">
-                    <i class="users icon"></i> Factory Expenses
-                </a>
-            </li>
-          
-            <li class="nav-item">
-                <a href="product.html" class="nav-link text-dark">
-                    <i class="leaf icon"></i> Product
-                </a>
-            </li>
-        </ul>
-        <h5 class="ui horizontal divider header text-primary">Customizing</h5>
-        <ul class="nav flex-column bg-white mb-0">
-            <li class="nav-item">
-                <a href="raw_material_entry.htmll" class="nav-link text-dark">
-                    <i class="home icon"></i> raw_material
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="vendorPrice.html" class="nav-link text-dark">
-                    <i class="users icon"></i> Vendors
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="customers.html" class="nav-link text-dark">
-                    <i class="leaf icon"></i> customer
-                </a>
-            </li>
-        </ul>
-        <h5 class="ui horizontal divider header text-primary">Admin Console</h5>
-        <ul class="nav flex-column bg-white mb-0">
-            <li class="nav-item">
-                <a href="users.html" class="nav-link text-dark">
-                    <i class="users icon"></i> Manage Users
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="invoice.html" class="nav-link text-dark">
-                    <i class="leaf icon"></i> Invoice
-                </a>
-            </li>
-            <a href="#" id="logoutBtn"><i class="sign-out icon"></i> Logout</a>
-        </ul>
+    <div class="nav-divider">Project</div>
+    <a href="dashboard.html"><i class="home icon"></i> Dashboard</a>
+    <a href="greens.html"><i class="leaf icon"></i> Greens Entry</a>
+    <a href="Greens Status Report.html"><i class="chart bar icon"></i> Greens Status</a>
+    <a href="production.html"><i class="cog icon"></i> Production</a>
+    <a href="RawMaterialPurchase.html"><i class="cart icon"></i> Raw Material</a>
+
+    <div class="nav-divider">Admin</div>
+    <a href="#"><i class="truck icon"></i> Logistics</a>
+    <a href="#"><i class="file alternate icon"></i> Invoice</a>
+    <a href="#" id="logoutBtn"><i class="sign-out icon"></i> Logout</a>
+  </div>
+
+  <!-- Content -->
+  <div id="content">
+    <button id="sidebarCollapse" class="btn btn-light mb-4">
+      <i class="bars icon"></i> Menu
+    </button>
+
+    <div class="header-row">
+      <h2 id="welcomeMsg">Welcome, Admin</h2>
+      <span id="datetime"></span>
     </div>
-<!-- Sidebar Menu end -->
-    <!-- Page content holder -->
-    <div class="page-content p-5" id="content" style="background: linear-gradient(to right, #e9edf1 47%, #ff8ab3 100%);">
-        <!-- Toggle button -->
-        <button id="sidebarCollapse" type="button" class="btn btn-light bg-white rounded-pill shadow-sm px-4 mb-4">
-            <i class="align justify icon"></i><small class="text-uppercase font-weight-bold">Menu</small>
-        </button>
-      
-        <!-- Page content -->
-        <h1>Dashboard</h1>
-        <br>
-        <div class="fluid container">
-            <div class="ui four column grid">
-                <div class="col-sm-6">
-                    <div class="ui fluid card text-white bg-success">
-                        <div class="content">
-                            <center>
-                                <div class="ui statistic">
-                                    <div class="value">
-                                        <p class="text-white">
-                                            <i class="leaf icon"></i> <span id="totalGreens">Loading...</span>
-                                        </p>
-                                    </div>
-                                    <div class="label">
-                                        Total Greens
-                                    </div>
-                                </div>
-                            </center>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="ui fluid card text-white bg-primary">
-                        <div class="content">
-                            <center>
-                                <div class="ui statistic">
-                                    <div class="value">
-                                        <p class="text-white">
-                                            <i class="rupee sign icon" ></i><span id="totalGreensprice">Loading...</span>
-                                        </p>
-                                    </div>
-                                    <div class="label">
-                                        Total total greens Value
-                                    </div>
-                                </div>
-                            </center>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="ui fluid card text-dark bg-warning">
-                        <div class="content">
-                            <center>
-                                <div class="ui statistic">
-                                    <div class="value">
-                                        <p class="text-white">
-                                            <i class="leaf icon"></i> <span id="totalGreens">Loading...</span>
-                                        </p>
-                                    </div>
-                                    <div class="label">
-                                        Total Greens
-                                    </div>
-                                </div>
-                            </center>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6">
-                    <div class="ui fluid card text-white bg-info">
-                        <div class="content">
-                            <center>
-                                <div class="ui statistic">
-                                    <div class="value">
-                                        <p class="text-white">
-                                            <i class="rupee sign icon" ></i><span id="totalGreensprice">Loading...</span>
-                                        </p>
-                                    </div>
-                                   <div class="label">
-                                        Total total greens Value
-                                    </div> 
-                                </div>
-                            </center>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <script defer src="./js/dashboard.js"></script>
-    <script defer src="./js/greensEntry.js"></script>
 
+    <h3 class="mt-4">Dashboard Overview</h3>
 
-   <!-- Logout functionality -->
-    <script>
-        // Logout functionality for the sidebar logout button
-        document.getElementById("logoutBtn").addEventListener("click", function() {
-            localStorage.removeItem("token"); // Remove the token from localStorage
-            window.location.href = "login.html"; // Redirect to login page
-        });
+    <div class="dashboard-grid mt-4" id="summaryRow">
+      <div class="card-dark p-4 text-center">
+        <div class="stat-title">Greens Arrival (kg)</div>
+        <div class="stat-value" id="greensTotal">0</div>
+      </div>
 
-        // Logout functionality for the top navbar logout button
-        document.getElementById("logoutBtnTop").addEventListener("click", function() {
-            localStorage.removeItem("token"); // Remove the token from localStorage
-            window.location.href = "login.html"; // Redirect to login page
-        });
-
-        // Toggle Sidebar functionality
-        document.getElementById("sidebarToggle").addEventListener("click", function() {
-            const sidebar = document.getElementById("sidebar");
-            const content = document.getElementById("content");
-
-            sidebar.classList.toggle("collapsed");
-            content.classList.toggle("expanded");
-        });
-    </script>
-    <!-- Semantic UI Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+      <div class="card-dark p-4 text-center">
+        <div class="stat-title">Greens Cost (₹)</div>
+        <div class="stat-value" id="greensValue">0</div>
+      </div>
     
-    <!-- Toggle Sidebar -->
-    <script>
-        $(function() {
-            // Sidebar toggle behavior
-            $('#sidebarCollapse').on('click', function() {
-                $('#sidebar, #content').toggleClass('active');
-            });
-        });
-    </script>
-</body>
+      <div class="card-dark p-4 text-center">
+        <div class="stat-title">Production Stock</div>
+        <div class="stat-value" id="totalSolutionUsed">0</div>
+      </div>
+       <div class="card-dark p-4 text-center">
+        <div class="stat-title">Total Acetic Acid</div>
+        <div class="stat-value" id="acidTotal">0</div>
+       </div>
+       <div class="card-dark p-4 text-center">
+        <div class="stat-title">Total Vinegar</div>
+        <div class="stat-value" id="vinegarTotal">0</div>
+       </div>
+       <div class="card-dark p-4 text-center">
+        <div class="stat-title">Total Brine</div>
+        <div class="stat-value" id="brineTotal">0</div>
+       </div>
+    </div>
+    </div>
+  </div>
 
+  <!-- External JS Libraries -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Dashboard Script -->
+  <script>
+    document.addEventListener("DOMContentLoaded", async function () {
+      // Sidebar Toggle
+      const sidebarToggle = document.getElementById("sidebarCollapse");
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener("click", () => {
+          document.getElementById("sidebar").classList.toggle("collapsed");
+          document.getElementById("content").classList.toggle("expanded");
+        });
+      }
+
+      // Logout
+      const logoutBtns = [document.getElementById("logoutBtn"), document.getElementById("logoutBtnTop")];
+      logoutBtns.forEach(btn => {
+        if (btn) {
+          btn.onclick = () => {
+            localStorage.removeItem("token");
+            window.location.href = "login.html";
+          };
+        }
+      });
+
+      // DateTime Update
+      function updateDateTime() {
+        const now = new Date();
+        document.getElementById("datetime").textContent = now.toLocaleString("en-IN", {
+          weekday: "short",
+          year: "numeric",
+          month: "short",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+      }
+      updateDateTime();
+      setInterval(updateDateTime, 1000);     
+    });
+  </script>
+ <Script src="./js/dashboard.js"></Script>
+</body>
 </html>

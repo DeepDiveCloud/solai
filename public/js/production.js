@@ -6,6 +6,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('logoutBtnTop')
     .addEventListener('click', handleLogout);
+    
+  loadSummary(); // 🚀
+
+
 
   // Initial load
   loadProductions();
@@ -299,4 +303,19 @@ async function deleteRow(id){
 
 function editRow(id){
   alert('Edit not implemented yet');
+}
+
+async function loadSummary() {
+  try {
+    const res = await fetch('/api/production-summary');
+    const data = await res.json();
+
+    document.getElementById('acidTotal').textContent = data.acidTotal;
+    document.getElementById('vinegarTotal').textContent = data.vinegarTotal;
+    document.getElementById('brineTotal').textContent = data.brineTotal;
+    document.getElementById('grandTotal').textContent = data.grandTotal;
+
+  } catch (e) {
+    console.error("Summary fetch failed", e);
+  }
 }
