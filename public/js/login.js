@@ -1,7 +1,7 @@
 $(document).ready(() => {
   // Handle login form submission
   $("#loginForm").submit((event) => {
-    event.preventDefault(); // Prevent form from reloading the page
+    event.preventDefault();
 
     const email = $("#email").val().trim();
     const password = $("#password").val().trim();
@@ -11,43 +11,50 @@ $(document).ready(() => {
       return;
     }
 
-    // Send login request
     $.ajax({
-      url: "http://localhost:5000/api/auth/login", // Your backend login route
+      url: "http://localhost:5000/api/auth/login",
       method: "POST",
       contentType: "application/json",
       data: JSON.stringify({ email, password }),
       success: (response) => {
-        if (response.token) {
-          // Save login details in localStorage
-          localStorage.setItem("token", response.token);
-          localStorage.setItem("role", response.role);
-          localStorage.setItem("user", email);
+        const { user, token } = response;
 
-          // Redirect based on role
-          if (response.role === "admin") {
-            window.location.href = "dashboard.html";
-          } else {
-            window.location.href = "production.html"; // or user_dashboard.html
-          }
+        if (!token || !user) {
+          alert("Login failed: Invalid response.");
+          return;
+        }
+
+        localStorage.setItem("token", token);
+        localStorage.setItem("email", user.email);
+        localStorage.setItem("role", user.role);
+        localStorage.setItem("groups", JSON.stringify(user.groups));
+
+        // Redirect by role or group
+        if (user.role === "admin" || user.role === "superuser") {
+          window.location.href = "dashboard.html";
+        } else if (user.groups.includes("Production")) {
+          window.location.href = "production.html";
+        } else if (user.groups.includes("Sales")) {
+          window.location.href = "sales.html";
+        } else if (user.groups.includes("Quality")) {
+          window.location.href = "quality.html";
         } else {
-          alert("Login failed: No token received.");
+          window.location.href = "unauthorized.html"; // fallback page
         }
       },
       error: (xhr) => {
         console.error("Login error:", xhr.responseText);
-        alert("Invalid email or password. Please try again.");
+        alert("Invalid email or password.");
       }
     });
   });
 
-  // Auto logout protection (for pages that include this login.js)
+  // 🔐 Auto protection for non-public pages
   const page = window.location.pathname.split("/").pop();
-  const publicPages = ["login.html", "register.html"];
+  const publicPages = ["login.html", "register.html", "unauthorized.html"];
   const token = localStorage.getItem("token");
 
   if (!token && !publicPages.includes(page)) {
-    // If not logged in and on a protected page
     window.location.href = "login.html";
   }
 });

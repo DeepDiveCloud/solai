@@ -67,12 +67,12 @@ router.get("/seasons/all", async (req, res) => {
     }
 });
 
-// ✅ Get distinct transport locations
+// ✅ Get transport locations from the 'locations' table
 router.get("/locations", async (req, res) => {
     const query = `
-        SELECT DISTINCT location 
-        FROM transport_prices 
-        ORDER BY location ASC
+        SELECT DISTINCT location_name AS location 
+        FROM locations 
+        ORDER BY location_name ASC
     `;
 
     try {
@@ -85,25 +85,15 @@ router.get("/locations", async (req, res) => {
 });
 
 // ✅ Get transport price by location_id and vehicle_type
-router.get("/transportprice", async (req, res) => {
-    const { location_id, vehicle_type } = req.query;
-
+router.get("/Transport-prices", async (req, res) => {
     try {
-        const query = `
-            SELECT * FROM transport_price_list 
-            WHERE location_id = ? AND vehicle_type = ?
-        `;
-        const [result] = await db.query(query, [location_id, vehicle_type]);
-
-        if (result.length > 0) {
-            res.json(result[0]);
-        } else {
-            res.status(404).json({ error: "Price not found for this location and vehicle type" });
-        }
-    } catch (error) {
-        console.error("Error fetching transport price:", error);
+        const [results] = await db.query("SELECT * FROM transport_prices");
+        res.json(results);
+    } catch (err) {
+        console.error("❌ Database error in /Transport-prices:", err);
         res.status(500).json({ error: "Database error" });
     }
 });
+
 
 module.exports = router;

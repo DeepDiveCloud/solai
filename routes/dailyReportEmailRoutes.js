@@ -163,6 +163,6 @@ cron.schedule('30 17 * * *', async () => {
 });
 
 // ✅ Manual Trigger (for test or server restart)
-(async () => {
-  await sendDailyEmail("🌿 Manual Trigger - Solai Agro Report");
-})();
+//(async () => {
+  //await sendDailyEmail("🌿 Manual Trigger - Solai Agro Report");
+//})();

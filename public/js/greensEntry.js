@@ -3,37 +3,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	// Initial load
 	fetchEntries();
-	initVendorDropdown();
-	initEventListeners();
+	
+	
 });
 
 
-//vendor dropdown
-
-async function fetchVendors() {
-	const date = document.getElementById("DcDate")?.value;
-	const vendorDropdown = document.getElementById("vendor_name");
-	if (!vendorDropdown) return;
-
-	try {
-		let url = "http://localhost:5000/api/vendors";
-		if (date) url += `?date=${encodeURIComponent(date)}`;
-
-		const response = await fetch(url);
-		if (!response.ok) throw new Error(`HTTP Error: ${response.status}`);
-
-		const vendors = await response.json();
-		vendorDropdown.innerHTML = '<option value="">Select Vendor</option>';
-		vendors.forEach(vendor => {
-			const option = document.createElement("option");
-			option.value = vendor.id;
-			option.textContent = vendor.vendor_name;
-			vendorDropdown.appendChild(option);
-		});
-	} catch (error) {
-		console.error("Error fetching vendors:", error);
-	}
-}
 
 
 // ✅ Fetch all entries
@@ -166,7 +140,7 @@ document.getElementById("greensForm").addEventListener("submit", function (event
 		DcDate: getValue("DcDate"),
 		FactoryArrivalDate: getValue("FactoryArrivalDate"),
 		Vendor: vendor || "", // make sure this is assigned correctly before this block
-		Location: getValue("location"),
+		Location: getValue("locationDropdown"),
 		Pattern: pattern || "", // make sure pattern is defined too
 		D30minus: getNumber("D30minus"),
 		D30plus: getNumber("D30plus"),
@@ -299,8 +273,13 @@ document.addEventListener("DOMContentLoaded", () => {
 	}
 
 	if (vendorDropdown) {
-		vendorDropdown.addEventListener("change", fetchPatterns);
-	}
+	vendorDropdown.addEventListener("change", fetchLocations);
+}
+
+const locationDropdown = document.getElementById("locationDropdown");
+if (locationDropdown) {
+	locationDropdown.addEventListener("change", fetchPatterns);
+}
 	else {
 		console.error("🚨 Element #vendor_name not found!");
 	}
@@ -362,72 +341,60 @@ function fetchVendors() {
 
 
 // Fetch patterns based on selected vendor and date
+
 function fetchPatterns() {
-	const vendorDropdown = document.getElementById("vendor_name");
-	const entryDateInput = document.getElementById("DcDate");
-	const patternDropdown = document.getElementById("pattern");
+	const vendor_name = document.getElementById("vendor_name")?.value.trim();
+	const entry_date = document.getElementById("DcDate")?.value.trim();
+	const location = document.getElementById("locationDropdown")?.value.trim();
 
-	if (!vendorDropdown || !entryDateInput || !patternDropdown) {
-		console.error("❌ One or more elements not found.");
+	if (!vendor_name || !entry_date || !location) {
+		console.warn("⚠️ Missing vendor, date, or location.");
 		return;
 	}
 
-	const vendor_name = vendorDropdown.value.trim();
-	const entry_date = entryDateInput.value.trim();
-
-	if (!vendor_name) {
-		console.warn("⚠️ No vendor selected. Clearing pattern dropdown.");
-		patternDropdown.innerHTML = '<option value="">Select Vendor First</option>';
-		return;
-	}
-
-	console.log(`🔍 Fetching patterns for vendor: ${vendor_name}, date: ${entry_date}`);
-
-	fetch(`http://localhost:5000/api/patterns/by-date-vendor?entry_date=${entry_date}&vendor_name=${encodeURIComponent(vendor_name)}`)
-		.then(response => response.json())
+	fetch(`http://localhost:5000/api/patterns/by-date-vendor?entry_date=${entry_date}&vendor_name=${encodeURIComponent(vendor_name)}&location=${encodeURIComponent(location)}`)
+		.then(res => res.json())
 		.then(patterns => {
-			console.log("📩 Pattern API Response:", patterns);
-
-			if (!Array.isArray(patterns) || patterns.length === 0) {
-				console.warn("⚠️ No patterns found.");
-				patternDropdown.innerHTML = '<option value="">No Patterns Available</option>';
-				return;
-			}
-
+			const patternDropdown = document.getElementById("pattern");
 			patternDropdown.innerHTML = '<option value="">Select Pattern</option>';
-			patterns.forEach(patternObj => {
+			patterns.forEach(p => {
 				const option = document.createElement("option");
-				option.value = patternObj.pattern;
-				option.textContent = patternObj.pattern;
+				option.value = p.greens_pattern;
+				option.textContent = p.greens_pattern;
 				patternDropdown.appendChild(option);
 			});
-
-			console.log("✅ Pattern dropdown updated.");
 		})
-		.catch(error => {
-			console.error("❌ Error fetching patterns:", error);
-		});
+		.catch(err => console.error("❌ Error fetching patterns:", err));
 }
 
-//location transport
-async function loadLocations() {
-	try {
-	  const res = await fetch("/api/locations");
-	  const locations = await res.json();
-  
-	  const dropdown = document.getElementById("locationDropdown");
-	  locations.forEach(loc => {
-		const option = document.createElement("option");
-		option.value = loc.location;
-		option.textContent = loc.location;
-		dropdown.appendChild(option);
-	  });
-	} catch (err) {
-	  console.error("Failed to load locations:", err);
+
+
+function fetchLocations() {
+	const vendor_name = document.getElementById("vendor_name")?.value.trim();
+	const entry_date = document.getElementById("DcDate")?.value.trim();
+
+	if (!vendor_name || !entry_date) {
+		console.warn("⚠️ Missing vendor or date for location fetch.");
+		return;
 	}
-  }
+
+	fetch(`http://localhost:5000/api/locations/by-date-vendor?entry_date=${entry_date}&vendor_name=${encodeURIComponent(vendor_name)}`)
+		.then(res => res.json())
+		.then(locations => {
+			const locationDropdown = document.getElementById("locationDropdown");
+			locationDropdown.innerHTML = '<option value="">Select Location</option>';
+			locations.forEach(l => {
+				const option = document.createElement("option");
+				option.value = l.greens_location;
+				option.textContent = l.greens_location;
+				locationDropdown.appendChild(option);
+			});
+		})
+		.catch(err => console.error("❌ Error fetching locations:", err));
+}
+
   
-  loadLocations();
+  
   
 
 

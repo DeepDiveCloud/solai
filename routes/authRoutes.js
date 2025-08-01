@@ -1,47 +1,49 @@
 const express = require("express");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const db = require("../models/db");  // ✅ Make sure this is correct
-
 const router = express.Router();
+const db = require("../models/db");
+const bcrypt = require("bcrypt");
 
-router.post("/login", (req, res) => {
-    const { email, password } = req.body;
-// Check if email exists in database
-    db.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
-        if (err) {
-            console.error("Database query error:", err);  // ✅ Debugging log
-            return res.status(500).json({ error: "Database error" });
-        }
-        if (results.length === 0) return res.status(401).json({ error: "User not found" });
+// ✅ Login Route
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
 
-        const user = results[0];
-// Compare hashed password
-        bcrypt.compare(password, user.password, (err, isMatch) => {
-            if (err) return res.status(500).json({ error: "Error checking password" });
-            if (!isMatch) return res.status(401).json({ error: "Invalid credentials" });
-// Generate JWT Token
-            const token = jwt.sign({ id: user.id, role: user.role }, "your_jwt_secret", { expiresIn: "1h" });
-            res.json({
-                message: "Login successful",
-                token: token,
-                role: user.role
-            });
-        });
+  if (!email || !password)
+    return res.status(400).json({ error: "Email and password are required" });
+
+  try {
+    const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    if (users.length === 0)
+      return res.status(401).json({ error: "Invalid credentials" });
+
+    const user = users[0];
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(401).json({ error: "Invalid credentials" });
+
+    // ✅ Fetch attached groups
+    const [groups] = await db.query(`
+      SELECT g.name FROM user_groups ug
+      JOIN \`groups\` g ON ug.group_id = g.id
+      WHERE ug.user_id = ?
+    `, [user.id]);
+
+    const groupNames = groups.map(g => g.name);
+
+    res.json({
+      message: "Login successful",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        groups: groupNames
+      }
     });
-});
-router.get("/verify", (req, res) => {
-    const token = req.headers.authorization?.split(" ")[1];
 
-    if (!token) {
-        return res.status(401).json({ error: "Unauthorized: No token provided" });
-    }
-
-    try {
-        const decoded = jwt.verify(token, "your_jwt_secret");
-        res.json({ role: decoded.role });
-    } catch (err) {
-        res.status(403).json({ error: "Invalid or expired token" });
-    }
+  } catch (err) {
+    console.error("Login error:", err);
+    res.status(500).json({ error: "Server error" });
+  }
 });
+
 module.exports = router;

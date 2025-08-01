@@ -32,11 +32,12 @@ const transportRoutes = require("./routes/transportRoutes");
 const purchaseRoutes = require('./routes/purchase');
 const customerRoutes = require('./routes/customerRoutes');
 const invoiceRouters = require("./routes/invoiceRoutes")
-const groupRoutes = require("./routes/groupsRoutes"); 
+const groupsRoutes = require("./routes/groupRoutes"); 
 const productionRoutes = require("./routes/productionRoutes");
 const productionExportRoutes = require("./routes/productionExportRoutes");
 const rawMaterialRoutes = require("./routes/rawMaterialRoutes");
 const dailyReportEmailRoutes = require("./routes/dailyReportEmailRoutes");
+const greensLocationsRoutes = require("./routes/greensLocationsRoutes");
 
 // Mount routes (order matters if endpoints overlap)
 app.use("/api", invoiceRouters);
@@ -50,10 +51,11 @@ app.use("/api", greensReport);
 app.use("/api", greensRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api", userRoutes);
-app.use("/api", groupRoutes);
+app.use("/api", groupsRoutes);
 app.use("/api", productionRoutes);
 app.use("/api/production", productionExportRoutes);
 app.use("/api", rawMaterialRoutes);
+app.use("/api", greensLocationsRoutes);
 
 
 // Redirect root URL to login page

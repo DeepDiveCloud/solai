@@ -1,61 +1,151 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Semantic UI CSS-->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.css">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
-    <script defer src="js/login.js"></script> 
-    <title>Login</title>
-  </head>
-  <body style="background: linear-gradient(to bottom, #15c118 0%, #3015de 100%);">
-    
-    <br><br><br><br>
-    
-    <div class="ui raised very padded text container segment">
-      <h1 class="fs-1 text-white" style="background: linear-gradient(to right, #0ed112 0%, #1619e3 68%);"><center>Solai Agro</center></h1>  
-      <br>
-      <h3 class="card-title"><center>LOGIN to your account</center></h3> 
-      <br>
-      <div class="ui two column grid">
-        <div class="row">
-          <div class="column">
-            <img class="ui small image" src="../images/solai logo.png">
-          </div>
-          <div class="column">
-            <form id="loginForm" class="ui large form">
-              <div class="field">
-                <div class="ui left icon input">
-                  <i class="user icon"></i>
-                  <input placeholder="Your email address" type="email" id="email" name="email" required>
-                </div> 
-              </div>
-              <div class="field">
-                <div class="ui left icon input">
-                  <i class="lock icon"></i>
-                  <input placeholder="Your password" type="password" id="password" name="password" required>
-                </div>
-              </div>
-              <br>
-              <button type="submit" class="ui fluid large teal submit button" style="background: linear-gradient(to right, #33e01c 0%, #361dd7 68%);">Login</button>
-            </form>
-          </div>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Solai Agro Login</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Roboto', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(to right, #00b09b, #96c93d);
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+    }
+
+    .login-box {
+      background: #ffffff;
+      border-radius: 12px;
+      padding: 40px 30px;
+      box-shadow: 0 15px 25px rgba(0,0,0,0.2);
+      width: 100%;
+      max-width: 400px;
+      animation: slideIn 0.6s ease;
+      text-align: center;
+    }
+
+    .login-box img {
+      width: 80px;
+      margin-bottom: 10px;
+    }
+
+    .login-box h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 25px;
+    }
+
+    .input-box {
+      position: relative;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 12px 15px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .input-box input:focus {
+      border-color: #00b09b;
+      box-shadow: 0 0 5px #00b09b;
+    }
+
+    .input-box label {
+      position: absolute;
+      top: 50%;
+      left: 15px;
+      transform: translateY(-50%);
+      pointer-events: none;
+      transition: 0.3s;
+      color: #888;
+      background: white;
+      padding: 0 5px;
+    }
+
+    .input-box input:focus + label,
+    .input-box input:not(:placeholder-shown) + label {
+      top: -10px;
+      left: 10px;
+      font-size: 12px;
+      color: #00b09b;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: #00b09b;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #009f8b;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0px);
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-box {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-box">
+    <img src="images/solai logo.png" alt="Solai Agro Logo" />
+    <h2>Solai Agro Login</h2>
+
+    <form id="loginForm">
+      <div class="input-box">
+        <input type="email" id="email" placeholder=" " required />
+        <label for="email">Email</label>
       </div>
-    </div>
-  
-    <!-- JavaScript Libraries -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.13/semantic.min.js"></script>
-    <!-- Optional JavaScript; choose one of the two! -->
-    <!-- Option 1: Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+      <div class="input-box">
+        <input type="password" id="password" placeholder=" " required />
+        <label for="password">Password</label>
+      </div>
+      <button type="submit">Sign In</button>
+    </form>
+  </div>
 
-    <!-- Custom Login Script -->
-   
+  <script>
+    document.getElementById("loginForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      alert("Simulated login success! Add your logic here.");
+    });
+  </script>
 
-  </body>
+</body>
 </html>

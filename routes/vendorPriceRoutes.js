@@ -1,128 +1,114 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../models/db"); // mysql2/promise
-
-// ✅ Add new vendor price with season
-router.post("/add", async (req, res) => {
-    const {
-        season_name,
-        from_date,
-        to_date,
-        vendor_name,
-        pattern,
-        price_160_plus,
-        price_100_plus,
-        price_30_plus,
-        price_30_minus
-    } = req.body;
-
-    if (
-        !season_name || !from_date || !to_date || !vendor_name || !pattern ||
-        !price_160_plus || !price_100_plus || !price_30_plus || !price_30_minus
-    ) {
-        return res.status(400).json({ error: "All fields are required" });
-    }
-
-    if (!Date.parse(from_date) || !Date.parse(to_date)) {
-        return res.status(400).json({ error: "Invalid date format" });
-    }
-
-    const query = `
-        INSERT INTO vendor_prices 
-        (season_name, from_date, to_date, vendor_name, pattern, 
-         price_160_plus, price_100_plus, price_30_plus, price_30_minus) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-    try {
-        const [result] = await db.query(query, [
-            season_name,
-            from_date,
-            to_date,
-            vendor_name,
-            pattern,
-            price_160_plus,
-            price_100_plus,
-            price_30_plus,
-            price_30_minus
-        ]);
-        res.json({ message: "Vendor price added successfully", id: result.insertId });
-    } catch (err) {
-        console.error("Error inserting vendor price:", err);
-        res.status(500).json({ error: "Database error" });
-    }
-});
+const db = require("../models/db");
 
 // ✅ Fetch all vendor prices
 router.get("/prices", async (req, res) => {
-    const query = `
-        SELECT id, season_name, 
-        DATE_FORMAT(from_date, '%Y-%m-%d') AS from_date, 
-        DATE_FORMAT(to_date, '%Y-%m-%d') AS to_date, 
-        vendor_name, pattern, price_160_plus, price_100_plus, price_30_plus, price_30_minus 
-        FROM vendor_prices`;
+  try {
+    const [rows] = await db.query("SELECT * FROM vendor_prices ORDER BY id DESC");
+    res.json(rows);
+  } catch (err) {
+    console.error("Fetch Error:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
 
-    try {
-        const [results] = await db.query(query);
-        res.json(results);
-    } catch (err) {
-        console.error("Error fetching vendor prices:", err);
-        res.status(500).json({ error: "Database error" });
-    }
+// ✅ Add new vendor price
+router.post("/add", async (req, res) => {
+  const {
+    season_name, from_date, to_date, vendor_name,
+    greens_location, greens_pattern,
+    price_160_plus, price_100_plus, price_60_plus,
+    price_30_plus, price_30_minus
+  } = req.body;
+
+  try {
+    await db.query(
+      `INSERT INTO vendor_prices 
+       (season_name, from_date, to_date, vendor_name, greens_location, greens_pattern,
+        price_160_plus, price_100_plus, price_60_plus, price_30_plus, price_30_minus)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [season_name, from_date, to_date, vendor_name, greens_location, greens_pattern,
+        price_160_plus, price_100_plus, price_60_plus, price_30_plus, price_30_minus]
+    );
+    res.status(201).json({ message: "Vendor price added" });
+  } catch (err) {
+    console.error("Insert Error:", err);
+    res.status(500).json({ error: "Insert failed" });
+  }
 });
 
 // ✅ Delete vendor price
 router.delete("/delete/:id", async (req, res) => {
-    const { id } = req.params;
-    const query = "DELETE FROM vendor_prices WHERE id = ?";
+  const { id } = req.params;
 
-    try {
-        const [result] = await db.query(query, [id]);
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: "Vendor price not found" });
-        }
-
-        res.json({ message: "Vendor price deleted successfully" });
-    } catch (err) {
-        console.error("Error deleting vendor price:", err);
-        res.status(500).json({ error: "Database error" });
-    }
+  try {
+    await db.query("DELETE FROM vendor_prices WHERE id = ?", [id]);
+    res.json({ message: "Deleted successfully" });
+  } catch (err) {
+    console.error("Delete Error:", err);
+    res.status(500).json({ error: "Delete failed" });
+  }
 });
 
-// ✅ Get Patterns Based on Entry Date & Vendor
-router.get("/patterns/by-date-vendor", async (req, res) => {
-    const { entry_date, vendor_name } = req.query;
+// ✅ Get vendor names based on date
+router.get("/vendors/by-date", async (req, res) => {
+  const { entry_date } = req.query;
 
-    if (!entry_date || !vendor_name) {
-        return res.status(400).json({ error: "Entry date and Vendor name are required" });
-    }
+  if (!entry_date) return res.status(400).json({ error: "entry_date is required" });
 
-    const query = `
-        SELECT DISTINCT pattern 
-        FROM vendor_prices 
-        WHERE from_date <= ? AND to_date >= ? 
-        AND vendor_name = ?`;
+  try {
+    const [vendors] = await db.query(`
+      SELECT DISTINCT vendor_name
+      FROM vendor_prices
+      WHERE ? BETWEEN from_date AND to_date
+    `, [entry_date]);
 
-    try {
-        const [results] = await db.query(query, [entry_date, entry_date, vendor_name]);
-        res.json(results);
-    } catch (err) {
-        console.error("Error fetching patterns:", err);
-        res.status(500).json({ error: "Database error" });
-    }
+    res.json(vendors);
+  } catch (err) {
+    console.error("Error fetching vendors by date:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
-// ✅ Get all unique vendor names
-router.get("/vendors", async (req, res) => {
-    const query = "SELECT DISTINCT vendor_name FROM vendor_prices ORDER BY vendor_name ASC";
+// ✅ Get greens patterns based on vendor and date
+router.get("/patterns", async (req, res) => {
+  const { date, vendor } = req.query;
 
-    try {
-        const [results] = await db.query(query);
-        res.json(results);
-    } catch (err) {
-        console.error("Error fetching vendors:", err);
-        res.status(500).json({ error: "Database error" });
-    }
+  if (!date || !vendor) return res.status(400).json({ error: "Date and vendor required" });
+
+  try {
+    const [rows] = await db.query(`
+      SELECT DISTINCT greens_pattern AS pattern
+      FROM vendor_prices
+      WHERE vendor_name = ? AND ? BETWEEN from_date AND to_date
+    `, [vendor, date]);
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Error fetching patterns:", err);
+    res.status(500).json({ error: "Database error" });
+  }
+});
+
+// ✅ Get greens locations based on vendor and date
+router.get("/vendor/locations", async (req, res) => {
+  const { vendor, date } = req.query;
+
+  if (!vendor || !date) return res.status(400).json({ error: "vendor and date required" });
+
+  try {
+    const [locations] = await db.query(`
+      SELECT DISTINCT greens_location
+      FROM vendor_prices
+      WHERE vendor_name = ? AND ? BETWEEN from_date AND to_date
+    `, [vendor, date]);
+
+    res.json(locations);
+  } catch (err) {
+    console.error("Error fetching locations:", err);
+    res.status(500).json({ error: "Database error" });
+  }
 });
 
 module.exports = router;

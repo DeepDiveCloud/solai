@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Location Entry</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+  <div class="container">
+    <h2>📍 Location Entry</h2>
+    
+    <form id="greensLocationForm">
+  <input type="text" id="greensLocationName" placeholder="Enter greens location" required />
+  <button type="submit">Add</button>
+</form>
+
+<p>Total: <span id="greensLocationCount">0</span></p>
+
+<table class="table">
+  <thead>
+    <tr><th>Name</th><th>Action</th></tr>
+  </thead>
+  <tbody id="greensLocationTableBody"></tbody>
+</table>
+
+<script src="./js/greenslocations.js"></script>
+
+</body>
+</html>

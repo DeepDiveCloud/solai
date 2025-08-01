@@ -1,17 +1,21 @@
 module.exports = function checkPermissions(requiredPermission) {
-    return (req, res, next) => {
-        if (req.user.role === 'admin') {
-            return next(); // Admin has all permissions
-        }
+  return (req, res, next) => {
+    const user = req.user; // Assume you attach user info during auth (JWT or session)
 
-        const userPermissions = Array.isArray(req.user.permissions)
-            ? req.user.permissions
-            : JSON.parse(req.user.permissions || '[]');
+    // ✅ Full access if super admin
+    if (user.super_admin === true) {
+      return next();
+    }
 
-        if (!userPermissions.includes(requiredPermission)) {
-            return res.status(403).json({ error: 'Access denied: insufficient permissions' });
-        }
+    // ✅ Otherwise check permission
+    const permissions = Array.isArray(user.permissions)
+      ? user.permissions
+      : JSON.parse(user.permissions || '[]');
 
-        next();
-    };
+    if (!permissions.includes(requiredPermission)) {
+      return res.status(403).json({ error: 'Access denied: insufficient permissions' });
+    }
+
+    next();
+  };
 };

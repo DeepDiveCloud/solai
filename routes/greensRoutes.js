@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../models/db"); // Ensure this is mysql2/promise connection
+const db = require("../models/db");
 
 // ✅ GET all entries
 router.get("/greens", async (req, res) => {
@@ -13,7 +13,7 @@ router.get("/greens", async (req, res) => {
     }
 });
 
-// ✅ GET a single entry by ID
+// ✅ GET single entry by ID
 router.get("/greens/:id", async (req, res) => {
     try {
         const [results] = await db.query("SELECT * FROM greens_arrival WHERE id = ?", [req.params.id]);
@@ -25,7 +25,7 @@ router.get("/greens/:id", async (req, res) => {
     }
 });
 
-// ✅ POST (Add new entry)
+// ✅ POST - Add new entry
 router.post("/greens", async (req, res) => {
     try {
         const {
@@ -34,7 +34,7 @@ router.post("/greens", async (req, res) => {
             F160plus, F100plus, F30plus, F30minus
         } = req.body;
 
-        if (!DcNumber || !DcDate || !FactoryArrivalDate || !Vendor || !Pattern) {
+        if (!DcNumber || !DcDate || !FactoryArrivalDate || !Vendor || !Pattern || !Location) {
             return res.status(400).json({ error: "Missing required fields!" });
         }
 
@@ -50,11 +50,16 @@ router.post("/greens", async (req, res) => {
         const TotalFactoryWeight = F160plusNum + F100plusNum + F30plusNum + F30minusNum;
         const Shortage_Excess = TotalDCWeight - TotalFactoryWeight;
 
-        const vendorPriceQuery = `SELECT price_160_plus, price_100_plus, price_30_plus, price_30_minus FROM vendor_prices WHERE vendor_name = ? AND pattern = ?`;
-        const [vendorPrices] = await db.query(vendorPriceQuery, [Vendor, Pattern]);
+        const priceQuery = `
+            SELECT price_160_plus, price_100_plus, price_30_plus, price_30_minus 
+            FROM vendor_prices 
+            WHERE vendor_name = ? AND greens_pattern = ? AND greens_location = ? AND ? BETWEEN from_date AND to_date
+            LIMIT 1`;
+
+        const [vendorPrices] = await db.query(priceQuery, [Vendor, Pattern, Location, DcDate]);
 
         if (vendorPrices.length === 0) {
-            return res.status(404).json({ error: "Vendor price not found for this pattern" });
+            return res.status(404).json({ error: "Vendor price not found for this pattern, location, and date" });
         }
 
         const { price_160_plus, price_100_plus, price_30_plus, price_30_minus } = vendorPrices[0];
@@ -65,10 +70,10 @@ router.post("/greens", async (req, res) => {
         const F30minusprice = price_30_minus * F30minusNum;
         const FTotalgreensAmount = F160plusprice + F100plusprice + F30plusprice + F30minusprice;
 
-        const D160plusprice = price_160_plus * F160plusNum;
-        const D100plusprice = price_100_plus * F100plusNum;
-        const D30plusprice = price_30_plus * F30plusNum;
-        const D30minusprice = price_30_minus * F30minusNum;
+        const D160plusprice = price_160_plus * D160plusNum;
+        const D100plusprice = price_100_plus * D100plusNum;
+        const D30plusprice = price_30_plus * D30plusNum;
+        const D30minusprice = price_30_minus * D30minusNum;
         const DTotalgreensAmount = D160plusprice + D100plusprice + D30plusprice + D30minusprice;
 
         const sql = `
@@ -82,13 +87,18 @@ router.post("/greens", async (req, res) => {
 
         const [result] = await db.query(sql, [
             DcNumber, DcDate, FactoryArrivalDate, Vendor, Location, Pattern,
-            D160plus, D100plus, D30plus, D30minus, TotalDCWeight, VehicleNo,
+            D160plusNum, D100plusNum, D30plusNum, D30minusNum, TotalDCWeight, VehicleNo,
             F160plusNum, F100plusNum, F30plusNum, F30minusNum, TotalFactoryWeight, Shortage_Excess,
             F160plusprice, F100plusprice, F30plusprice, F30minusprice, FTotalgreensAmount,
             D160plusprice, D100plusprice, D30plusprice, D30minusprice, DTotalgreensAmount
         ]);
 
-        res.status(201).json({ message: "Entry added successfully", id: result.insertId, F_total_greens_amount: FTotalgreensAmount, dc_total_greens_amount: DTotalgreensAmount });
+        res.status(201).json({
+            message: "Entry added successfully",
+            id: result.insertId,
+            F_total_greens_amount: FTotalgreensAmount,
+            dc_total_greens_amount: DTotalgreensAmount
+        });
 
     } catch (err) {
         console.error("❌ Insert error:", err);
@@ -96,41 +106,85 @@ router.post("/greens", async (req, res) => {
     }
 });
 
-// ✅ PUT (Update an existing entry)
+// ✅ PUT - Update an entry
 router.put("/greens/:id", async (req, res) => {
     try {
         const entryId = req.params.id;
         const {
             DcNumber, DcDate, FactoryArrivalDate, Vendor, Location, Pattern,
             D160plus, D100plus, D30plus, D30minus, TotalDCWeight,
-            VehicleNo, F160plus, F100plus, F30plus, F30minus,
-            TotalFactoryWeight, Shortage_Excess
+            VehicleNo, F160plus, F100plus, F30plus, F30minus
         } = req.body;
 
-        const sql = `UPDATE greens_arrival  
-            SET dc_number=?, dc_date=?, factory_arrival_date=?, vendor=?, location=?, pattern=?, 
-            d_160_plus=?, d_100_plus=?, d_30_plus=?, d_30_minus=?, total_dc_weight=?, vehicle_no=?, 
-            f_160_plus=?, f_100_plus=?, f_30_plus=?, f_30_minus=?, total_factory_weight=?, shortage_excess=? 
+        const F160plusNum = Number(F160plus) || 0;
+        const F100plusNum = Number(F100plus) || 0;
+        const F30plusNum = Number(F30plus) || 0;
+        const F30minusNum = Number(F30minus) || 0;
+        const D160plusNum = Number(D160plus) || 0;
+        const D100plusNum = Number(D100plus) || 0;
+        const D30plusNum = Number(D30plus) || 0;
+        const D30minusNum = Number(D30minus) || 0;
+
+        const TotalFactoryWeight = F160plusNum + F100plusNum + F30plusNum + F30minusNum;
+        const Shortage_Excess = TotalFactoryWeight - TotalDCWeight;
+
+        const priceQuery = `
+            SELECT price_160_plus, price_100_plus, price_30_plus, price_30_minus
+            FROM vendor_prices
+            WHERE vendor_name = ? AND greens_pattern = ? AND greens_location = ? AND ? BETWEEN from_date AND to_date
+            LIMIT 1`;
+
+        const [vendorPrices] = await db.query(priceQuery, [Vendor, Pattern, Location, DcDate]);
+
+        if (vendorPrices.length === 0) {
+            return res.status(404).json({ error: "Vendor price not found for this pattern, location, and date" });
+        }
+
+        const { price_160_plus, price_100_plus, price_30_plus, price_30_minus } = vendorPrices[0];
+
+        const F160plusprice = price_160_plus * F160plusNum;
+        const F100plusprice = price_100_plus * F100plusNum;
+        const F30plusprice = price_30_plus * F30plusNum;
+        const F30minusprice = price_30_minus * F30minusNum;
+        const FTotalgreensAmount = F160plusprice + F100plusprice + F30plusprice + F30minusprice;
+
+        const D160plusprice = price_160_plus * D160plusNum;
+        const D100plusprice = price_100_plus * D100plusNum;
+        const D30plusprice = price_30_plus * D30plusNum;
+        const D30minusprice = price_30_minus * D30minusNum;
+        const DTotalgreensAmount = D160plusprice + D100plusprice + D30plusprice + D30minusprice;
+
+        const sql = `
+            UPDATE greens_arrival SET
+                dc_number=?, dc_date=?, factory_arrival_date=?, vendor=?, location=?, pattern=?,
+                d_160_plus=?, d_100_plus=?, d_30_plus=?, d_30_minus=?, total_dc_weight=?, vehicle_no=?,
+                f_160_plus=?, f_100_plus=?, f_30_plus=?, f_30_minus=?, total_factory_weight=?, shortage_excess=?,
+                F_price_160_plus=?, F_price_100_plus=?, F_price_30_plus=?, F_price_30_minus=?, F_total_greens_amount=?,
+                dc_price_160_plus=?, dc_price_100_plus=?, dc_price_30_plus=?, dc_price_30_minus=?, dc_total_greens_amount=?
             WHERE id=?`;
 
         const [result] = await db.query(sql, [
             DcNumber, DcDate, FactoryArrivalDate, Vendor, Location, Pattern,
-            D160plus, D100plus, D30plus, D30minus, TotalDCWeight,
-            VehicleNo, F160plus, F100plus, F30plus, F30minus,
-            TotalFactoryWeight, Shortage_Excess, entryId
+            D160plusNum, D100plusNum, D30plusNum, D30minusNum, TotalDCWeight, VehicleNo,
+            F160plusNum, F100plusNum, F30plusNum, F30minusNum, TotalFactoryWeight, Shortage_Excess,
+            F160plusprice, F100plusprice, F30plusprice, F30minusprice, FTotalgreensAmount,
+            D160plusprice, D100plusprice, D30plusprice, D30minusprice, DTotalgreensAmount,
+            entryId
         ]);
 
-        if (result.affectedRows === 0) return res.status(404).json({ error: "Entry not found" });
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Entry not found" });
+        }
 
         res.json({ message: "Entry updated successfully" });
 
     } catch (err) {
-        console.error("Update error:", err);
+        console.error("❌ Update error:", err);
         res.status(500).json({ error: "Failed to update entry" });
     }
 });
 
-// ✅ DELETE an entry
+// ✅ DELETE
 router.delete("/greens/:id", async (req, res) => {
     try {
         const [result] = await db.query("DELETE FROM greens_arrival WHERE id = ?", [req.params.id]);
@@ -142,16 +196,16 @@ router.delete("/greens/:id", async (req, res) => {
     }
 });
 
-// ✅ GET vendors by date
+// ✅ Get vendors by date
 router.get("/vendors/by-date", async (req, res) => {
     const { entry_date } = req.query;
-
-    if (!entry_date) {
-        return res.status(400).json({ error: "Entry date is required" });
-    }
+    if (!entry_date) return res.status(400).json({ error: "entry_date is required" });
 
     try {
-        const [results] = await db.query(`SELECT DISTINCT vendor_name FROM vendor_prices WHERE from_date <= ? AND to_date >= ?`, [entry_date, entry_date]);
+        const [results] = await db.query(
+            `SELECT DISTINCT vendor_name FROM vendor_prices WHERE ? BETWEEN from_date AND to_date`,
+            [entry_date]
+        );
         res.json(results);
     } catch (err) {
         console.error("Vendor query error:", err);
@@ -159,16 +213,37 @@ router.get("/vendors/by-date", async (req, res) => {
     }
 });
 
-// ✅ Get total entries for today
-router.get("/entries/today-total", async (req, res) => {
-    try {
-        const today = new Date().toISOString().split("T")[0];
-        const [results] = await db.query(`SELECT COUNT(*) AS total FROM entries WHERE DATE(entry_date) = ?`, [today]);
-        res.json({ total: results[0].total });
-    } catch (err) {
-        console.error("Today's total error:", err);
-        res.status(500).json({ error: "Internal server error" });
+// ✅ Get patterns by date + vendor + location
+router.get("/patterns/by-date-vendor", async (req, res) => {
+    const { entry_date, vendor_name, location } = req.query;
+    if (!entry_date || !vendor_name || !location) {
+        return res.status(400).json({ error: "entry_date, vendor_name, and location are required" });
     }
+
+    const [results] = await db.query(`
+        SELECT DISTINCT greens_pattern FROM vendor_prices 
+        WHERE vendor_name = ? AND greens_location = ? AND ? BETWEEN from_date AND to_date`,
+        [vendor_name, location, entry_date]
+    );
+
+    res.json(results);
+});
+
+
+// ✅ Get locations by date + vendor
+router.get("/locations/by-date-vendor", async (req, res) => {
+    const { entry_date, vendor_name } = req.query;
+    if (!entry_date || !vendor_name) {
+        return res.status(400).json({ error: "entry_date and vendor_name are required" });
+    }
+
+    const [results] = await db.query(`
+        SELECT DISTINCT greens_location FROM vendor_prices 
+        WHERE vendor_name = ? AND ? BETWEEN from_date AND to_date`,
+        [vendor_name, entry_date]
+    );
+
+    res.json(results);
 });
 
 module.exports = router;
