@@ -1,4 +1,6 @@
 require("dotenv").config();
+console.log("✅ Loaded JWT_SECRET:", process.env.JWT_SECRET);
+
 const express = require("express");
 const mysql = require("mysql");           // or mysql2 (if using promises)
 const bcrypt = require("bcrypt");

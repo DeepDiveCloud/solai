@@ -1,60 +1,38 @@
-$(document).ready(() => {
-  // Handle login form submission
-  $("#loginForm").submit((event) => {
-    event.preventDefault();
+document.getElementById("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
 
-    const email = $("#email").val().trim();
-    const password = $("#password").val().trim();
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-    if (!email || !password) {
-      alert("Please enter both email and password.");
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      alert(data.message || "Login failed");
       return;
     }
 
-    $.ajax({
-      url: "http://localhost:5000/api/auth/login",
-      method: "POST",
-      contentType: "application/json",
-      data: JSON.stringify({ email, password }),
-      success: (response) => {
-        const { user, token } = response;
+    // Save to localStorage
+    localStorage.setItem("token", data.token);
+    localStorage.setItem("role", data.role);
+    localStorage.setItem("super_admin", data.super_admin);
 
-        if (!token || !user) {
-          alert("Login failed: Invalid response.");
-          return;
-        }
-
-        localStorage.setItem("token", token);
-        localStorage.setItem("email", user.email);
-        localStorage.setItem("role", user.role);
-        localStorage.setItem("groups", JSON.stringify(user.groups));
-
-        // Redirect by role or group
-        if (user.role === "admin" || user.role === "superuser") {
-          window.location.href = "dashboard.html";
-        } else if (user.groups.includes("Production")) {
-          window.location.href = "production.html";
-        } else if (user.groups.includes("Sales")) {
-          window.location.href = "sales.html";
-        } else if (user.groups.includes("Quality")) {
-          window.location.href = "quality.html";
-        } else {
-          window.location.href = "unauthorized.html"; // fallback page
-        }
-      },
-      error: (xhr) => {
-        console.error("Login error:", xhr.responseText);
-        alert("Invalid email or password.");
-      }
-    });
-  });
-
-  // 🔐 Auto protection for non-public pages
-  const page = window.location.pathname.split("/").pop();
-  const publicPages = ["login.html", "register.html", "unauthorized.html"];
-  const token = localStorage.getItem("token");
-
-  if (!token && !publicPages.includes(page)) {
-    window.location.href = "login.html";
+    // Redirect
+    if (data.super_admin) {
+      window.location.href = "dashboard.html"; // Super admin default page
+    } else if (data.assigned_url) {
+      window.location.href = data.assigned_url;
+    } else {
+      alert("No assigned page for your role. Contact Admin.");
+    }
+  } catch (err) {
+    console.error("Login failed:", err);
+    alert("Login failed. Please try again.");
   }
 });

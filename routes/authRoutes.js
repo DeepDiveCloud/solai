@@ -1,48 +1,75 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../models/db");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const db = require("../models/db"); // your MySQL pool/connection
+const { authenticateToken } = require("../middleware/authenticateToken");
 
-// ✅ Login Route
+// ---------------- LOGIN ----------------
 router.post("/login", async (req, res) => {
-  const { email, password } = req.body;
-
-  if (!email || !password)
-    return res.status(400).json({ error: "Email and password are required" });
-
   try {
-    const [users] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
-    if (users.length === 0)
-      return res.status(401).json({ error: "Invalid credentials" });
+    const { email, password } = req.body;
+    if (!email || !password)
+      return res.status(400).json({ message: "Email and password required" });
 
-    const user = users[0];
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch)
-      return res.status(401).json({ error: "Invalid credentials" });
+    // Fetch user
+    const [rows] = await db.query("SELECT * FROM users WHERE email = ?", [email]);
+    const user = rows[0];
+    if (!user) return res.status(401).json({ message: "Invalid email or password" });
 
-    // ✅ Fetch attached groups
-    const [groups] = await db.query(`
-      SELECT g.name FROM user_groups ug
-      JOIN \`groups\` g ON ug.group_id = g.id
-      WHERE ug.user_id = ?
-    `, [user.id]);
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(401).json({ message: "Invalid email or password" });
 
-    const groupNames = groups.map(g => g.name);
-
-    res.json({
-      message: "Login successful",
-      user: {
-        id: user.id,
-        name: user.name,
+    // JWT token
+    const token = jwt.sign(
+      {
+        userId: user.id,
         email: user.email,
         role: user.role,
-        groups: groupNames
-      }
-    });
+        super_admin: user.super_admin === 1
+      },
+      process.env.JWT_SECRET,
+      { expiresIn: "12h" }
+    );
 
+    // Get assigned_url if not super_admin
+    let assigned_url = null;
+    if (!user.super_admin) {
+      const [groupRows] = await db.query(
+        `SELECT g.assigned_url
+         FROM user_groups ug
+         JOIN \`groups\` g ON ug.group_id = g.id
+         WHERE ug.user_id = ?`,
+        [user.id]
+      );
+      if (groupRows.length) assigned_url = groupRows[0].assigned_url;
+    }
+
+    res.json({ token, role: user.role, super_admin: user.super_admin === 1, assigned_url });
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Login verification for token
+router.get("/verify", authenticateToken, async (req, res) => {
+  try {
+    const user = req.user;
+
+    // Assign default for super_admin
+    const assigned_url = user.super_admin ? "ALL_PAGES_ACCESS" : user.assigned_url || null;
+
+    res.json({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      super_admin: user.super_admin,
+      assigned_url,
+    });
+  } catch (err) {
+    console.error("Verify failed:", err);
+    res.status(401).json({ message: "Unauthorized" });
   }
 });
 

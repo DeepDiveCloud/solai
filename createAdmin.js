@@ -1,11 +1,11 @@
 const bcrypt = require("bcrypt");
-const mysql = require("mysql");
+const mysql = require("mysql2/promise");
 
 const db = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "Maxjith@220",
-    database: "max_db"
+    password: "root",
+    database: "solai"
 });
 
 const email = "admin@example.com";
