@@ -1,73 +1,188 @@
-const API_URL = "http://localhost:5000/api/users";
+const API_URL = "/api/users";
+const GROUP_API_URL = "/api";
+const USER_GROUP_API_URL = "/api/user-groups";
 
-document.addEventListener("DOMContentLoaded", loadUsers);
+// ✅ Helper: get auth headers
+function getAuthHeaders() {
+  const token = localStorage.getItem("token"); // token must be set after login
+  return {
+    "Content-Type": "application/json",
+    ...(token ? { "Authorization": `Bearer ${token}` } : {})
+  };
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadUsers();
+  loadUsersForGroupAttach();
+  loadGroups();
+});
+
+document.getElementById("addUserForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const payload = {
+    name: document.getElementById("name").value.trim(),
+    email: document.getElementById("email").value.trim(),
+    password: document.getElementById("password").value,
+    role: document.getElementById("role").value
+  };
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Failed to add user");
+    alert(data.message || "User added successfully!");
+    e.target.reset();
+    loadUsers();
+    loadUsersForGroupAttach();
+  } catch (err) {
+    alert("Error adding user: " + err.message);
+  }
+});
+ 
+document.getElementById("refreshBtn").addEventListener("click", loadUsers);
 
 async function loadUsers() {
   try {
     const res = await fetch(API_URL);
     const users = await res.json();
-    const table = document.getElementById("userTable");
-    table.innerHTML = "";
 
-    users.forEach((u) => {
-      table.innerHTML += `
-        <tr>
-          <td>${u.id}</td>
-          <td><input type="text" value="${u.name}" data-id="${u.id}" data-field="name" class="form-control form-control-sm"></td>
-          <td><input type="email" value="${u.email}" data-id="${u.id}" data-field="email" class="form-control form-control-sm"></td>
-          <td>
-            <select data-id="${u.id}" data-field="role" class="form-select form-select-sm">
-              <option ${u.role === "Admin" ? "selected" : ""}>Admin</option>
-              <option ${u.role === "User" ? "selected" : ""}>User</option>
-            </select>
-          </td>
-          <td>
-            <button class="btn btn-sm btn-success" onclick="updateUser(${u.id})">Save</button>
-            <button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})">Delete</button>
-          </td>
-        </tr>`;
+    const tbody = document.getElementById("userTableBody");
+    tbody.innerHTML = "";
+
+    users.forEach(user => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${user.id}</td>
+        <td>${user.name}</td>
+        <td>${user.email}</td>
+        <td>${user.role}</td>
+        <td>
+          <button class="btn btn-danger btn-sm">Delete</button>
+        </td>
+      `;
+      tr.querySelector("button").addEventListener("click", () => deleteUser(user.id));
+      tbody.appendChild(tr);
     });
   } catch (err) {
-    console.error("Error loading users:", err);
+    alert("Error loading users: " + err.message);
   }
 }
 
-// Add User
-document.getElementById("userForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const role = document.getElementById("role").value;
-
-  await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, role }),
-  });
-
-  e.target.reset();
-  loadUsers();
-});
-
-// Update User
-async function updateUser(id) {
-  const name = document.querySelector(`[data-id='${id}'][data-field='name']`).value;
-  const email = document.querySelector(`[data-id='${id}'][data-field='email']`).value;
-  const role = document.querySelector(`[data-id='${id}'][data-field='role']`).value;
-
-  await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, email, role }),
-  });
-
-  loadUsers();
-}
-
-// Delete User
 async function deleteUser(id) {
   if (!confirm("Delete this user?")) return;
 
-  await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-  loadUsers();
+  try {
+    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+    if (!res.ok) throw new Error(res.statusText);
+    alert("User deleted");
+    loadUsers();
+    loadUsersForGroupAttach();
+  } catch (err) {
+    alert("Error deleting user: " + err.message);
+  }
 }
+
+async function loadUsersForGroupAttach() {
+  try {
+    const res = await fetch(API_URL);
+    const users = await res.json();
+
+    const userSelect = document.getElementById("userSelect");
+    userSelect.innerHTML = '<option value="">Select User</option>';
+    users.forEach(u => {
+      userSelect.innerHTML += `<option value="${u.id}">${u.name}</option>`;
+    });
+  } catch (err) {
+    console.error("Error loading users for group attach:", err);
+  }
+}
+
+async function loadGroups() {
+  try {
+    const res = await fetch(`${GROUP_API_URL}/groups`);
+    const groups = await res.json();
+
+    const groupSelect = document.getElementById("groupSelect");
+    groupSelect.innerHTML = '<option value="">Select Group</option>';
+    groups.forEach(g => {
+      groupSelect.innerHTML += `<option value="${g.id}">${g.name}</option>`;
+    });
+  } catch (err) {
+    console.error("Error loading groups:", err);
+  }
+}
+
+async function attachUserToGroup() {
+  const userId = document.getElementById("userSelect").value;
+  const groupId = document.getElementById("groupSelect").value;
+  const resultP = document.getElementById("result");
+
+  if (!userId || !groupId) {
+    resultP.innerText = "Select both a user and a group.";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${GROUP_API_URL}/user-group`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ userId, groupId })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || res.statusText);
+    resultP.innerText = data.message;
+    loadUserGroups(userId); // Refresh attached groups
+  } catch (err) {
+    resultP.innerText = "Error: " + err.message;
+  }
+}
+
+async function loadUserGroups(userId) {
+  const list = document.getElementById('userGroupList');
+  list.innerHTML = '';
+
+  if (!userId) return;
+
+  try {
+    const res = await fetch(`/api/user-groups/${userId}`);
+    if (!res.ok) throw new Error("Failed to load user groups");
+
+    const groups = await res.json();
+
+    if (groups.length === 0) {
+      list.innerHTML = '<li class="list-group-item text-muted">No groups assigned</li>';
+      return;
+    }
+
+    groups.forEach(group => {
+      const li = document.createElement('li');
+      li.className = 'list-group-item d-flex justify-content-between align-items-center';
+      li.innerHTML = `
+        ${group.name}
+        <button class="btn btn-sm btn-danger" onclick="removeUserGroup(${userId}, ${group.id})">Remove</button>
+      `;
+      list.appendChild(li);
+    });
+  } catch (err) {
+    console.error("Error loading user groups:", err);
+  }
+}
+async function removeUserGroup(userId, groupId) {
+  if (!confirm('Are you sure you want to detach this group from the user?')) return;
+
+  try {
+    const res = await fetch(`/api/user-group/${userId}/${groupId}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Failed to remove group');
+    loadUserGroups(userId); // Refresh list
+  } catch (err) {
+    console.error("Error removing group:", err);
+    alert('Error removing group: ' + err.message);
+  }
+}
+
